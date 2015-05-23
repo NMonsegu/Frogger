@@ -1,0 +1,39 @@
+fly.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+fly1
+  rotate: false
+  xy: 0, 0
+  size: 58, 36
+  orig: 27, 18
+  offset: 0, 0
+  index: -1
+fly2
+  rotate: false
+  xy: 58, 0
+  size: 58, 36
+  orig: 27, 18
+  offset: 0, 0
+  index: -1
+fly3
+  rotate: false
+  xy: 117, 0
+  size: 58, 36
+  orig: 27, 18
+  offset: 0, 0
+  index: -1
+fly4
+  rotate: false
+  xy: 175, 0
+  size: 58, 36
+  orig: 27, 18
+  offset: 0, 0
+  index: -1
+fly5
+  rotate: false
+  xy: 233, 0
+  size: 58, 36
+  orig: 27, 18
+  offset: 0, 0
+  index: -1

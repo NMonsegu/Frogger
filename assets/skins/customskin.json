@@ -1,0 +1,32 @@
+{  
+
+ 	com.badlogic.gdx.graphics.g2d.BitmapFont: { default-font: { file: aparajita.fnt } },
+ 	com.badlogic.gdx.graphics.Color: {
+		green: { a: 1, b: 0, g: 0, r: 0 },
+		white: { a: 1, b: 1, g: 1, r: 1 },
+		red: { a: 1, b: 0, g: 0, r: 1 },
+		black: { a: 1, b: 0, g: 0, r: 0 },
+		gray: { a: 1, b: 0.5, g: 0.5, r: 0.5 }
+	},
+ 	com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+		default: { font: default-font, fontColor: white},
+		title: { font: default-font, fontColor: white},
+		newtitle: { font: bigTitle, fontColor: white},
+		text: { font: label, fontColor: white}
+	},
+	com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+		default: { up: fondTurquoiseOff, down: fondTurquoiseOff, over: fondTurquoiseOff,checked: mini, disabled: mini}, 
+	},
+	com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+		default: { up: fondTurquoiseOff, down: fondTurquoise, over: fondTurquoise,checked: mini, disabled: mini, font: label, fontColor: white }
+	},
+	com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
+		perso: { checkboxOn: checkOn, checkboxOff: checkOff, font: label, fontColor: white }
+	},
+	com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+		default: { selection: mini, background: textField2, font: label, fontColor: gray, cursor: caret,focusedFontColor:black,focusedBackground:textField }
+	},
+	com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+		default-horizontal: { background: lineSlider, knob: knob }
+	}
+}  
