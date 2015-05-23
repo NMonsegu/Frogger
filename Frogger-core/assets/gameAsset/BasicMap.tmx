@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="25" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="frogger" tilewidth="32" tileheight="32">
+  <image source="frogger.png" trans="ff00ff" width="512" height="1024"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="25" height="25">
+  <data encoding="base64" compression="zlib">
+   eJy108lSwkAUheE8GyhoHgcRhyWKiksFGR7DAYGlighbZJCn4V9IFdWV7nu7ExZfUZWcPrfpJLkoivI4QC6FbcchCijiCMfKrKYndpDWhfSaudC92fqSMqFnql0XGxnXeleXZn9p1vr+D2lG6LvlO0Mzx/esbHN8v0Hf98nMSx0lnKCMU1RwhnNc4PKfKyd1VHGFa9Rwg1vcoZ7B/Xs84wWveEMP7+hjgGEGpBma+/vu0JyDNuOSxYyhR1/IHqX9ap9H2vOS1n7gE18Y4dtybeyZ/cEEU8zwizkWWGKFP6x3fs3rSVlbxwMe0UATT2ihjQ66QiaL9UnMvDTH1uPq0+R2Z2wA9W0zHQ==
+  </data>
+ </layer>
+</map>

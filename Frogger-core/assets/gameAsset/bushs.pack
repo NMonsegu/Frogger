@@ -1,0 +1,26 @@
+
+bush.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bigBush
+  rotate: false
+  xy: 0, 0
+  size: 180, 30
+  orig: 60, 15
+  offset: 0, 0
+  index: -1
+smallBush
+  rotate: false
+  xy: 0, 60
+  size: 60, 30
+  orig: 30, 15
+  offset: 0, 0
+  index: -1
+mediumBush
+  rotate: false
+  xy: 0, 30
+  size: 120, 30
+  orig: 40, 15
+  offset: 0, 0
+  index: -1
