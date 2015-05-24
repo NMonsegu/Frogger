@@ -10,7 +10,6 @@ public class UserMovements implements MovementBehavior
 	 * This MovementBehavior implementation manage the Users movement logic.
 	 * */
 	
-	
    @Override
    public void move(Rectangle bounds, int velocity) 
    {
@@ -23,10 +22,12 @@ public class UserMovements implements MovementBehavior
 	     
 	 public void moveRight(Rectangle bounds, int velocity)
 	 {  
+		//System.out.println("moveRight" + velocity);
 	     bounds.x += velocity ;
 	 }
 	  
-	 public void moveLeft(Rectangle bounds, int velocity){        
+	 public void moveLeft(Rectangle bounds, int velocity){
+		 //System.out.println("moveLeft" + velocity);
 	     bounds.x -= velocity ;
 	    }
 	 

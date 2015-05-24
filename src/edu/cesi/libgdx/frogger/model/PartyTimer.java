@@ -10,7 +10,6 @@ public class PartyTimer
 	private long lastSavedTimer;
 	public PartyTimer()
 	{
-		
 	}
 	
 	public void launchTimer(long time)

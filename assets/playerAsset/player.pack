@@ -55,7 +55,7 @@ front1
 front2
   rotate: false
   xy: 71, 184
-  size: 71, 79
+  size: 71, 90
   orig: 35, 35
   offset: 0, 0
   index: -1

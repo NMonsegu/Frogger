@@ -29,7 +29,6 @@ import edu.cesi.libgdx.frogger.data.SettingsManager;
 import edu.cesi.libgdx.frogger.model.Score;
 import edu.cesi.libgdx.frogger.utils.enums.GameStates;
 import edu.cesi.libgdx.frogger.view.ScoreStage;
-import edu.cesi.libgdx.frogger.view.menu.MenuScreen;
 
 public class EndLevelScreen implements Screen
 {
@@ -275,7 +274,11 @@ public class EndLevelScreen implements Screen
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		stage.dispose();
+		skin.dispose();
+		background.dispose();
+		batch.dispose();
+		System.out.println("End screen dispose");
 		
 	}
 

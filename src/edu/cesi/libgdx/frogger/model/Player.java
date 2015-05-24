@@ -18,6 +18,7 @@ public class Player extends Entity
 	private final int RIGHT = 4;
 	
 	public boolean isFloating = false;
+	public boolean isMouving = false;
 	
 	public int getDirection() {
 		return direction;
@@ -52,7 +53,6 @@ public class Player extends Entity
         advancedCollisionRectangle.width  = 40;
         advancedCollisionRectangle.height = 32;
         
-        
         stateTime = 0f;
          
         loadAnimation();
@@ -62,27 +62,30 @@ public class Player extends Entity
         mouvement_float = new UserMovements();
 	}
     
-	public Rectangle getAdvancedCollisionRectangle(){
+	public Rectangle getAdvancedCollisionRectangle()
+	{
 		return this.advancedCollisionRectangle;
 	}
 	
-	public void setAdvancedCollisionRectangleX( float x){
+	public void setAdvancedCollisionRectangleX( float x)
+	{
 		//return this.advancedCollisionRectangle;
 		this.advancedCollisionRectangle.x = x;
 	}
 	
-	public void setAdvancedCollisionRectangleY(float y){
+	public void setAdvancedCollisionRectangleY(float y)
+	{
 		//return this.advancedCollisionRectangle;
 		this.advancedCollisionRectangle.y = y;
 
 	}
 	
-    private void loadAnimation(){
+    private void loadAnimation()
+    {
 		
 		walkAnimation = new Animation(0.1f,imageManager.getPlayerBackTextureRegion());
 		walkStayAnimation = new Animation(0.1f,imageManager.getPlayerBackTextureRegion()[1]);
 
-		
 		backAnimation = new Animation(0.1f,imageManager.getPlayerWalkTextureRegion());
 		backStayAnimation = new Animation(0.1f,imageManager.getPlayerWalkTextureRegion()[1]);
 		
@@ -94,29 +97,37 @@ public class Player extends Entity
 	}
     
     @Override
-	public void move(int velocity){
-    	if(!isDead){
-
-        		mouvement.move(bounds, velocity);
+	public void move(int velocity)
+    {
+    	if(!isDead)
+    	{
+			mouvement.move(bounds, velocity);
     	}
     }
     
-    public void moveLeft(int velocity){
+    public boolean moveLeft = false;
+    public boolean moveRight = false;
+    
+    public void moveLeft(int velocity)
+    {
+    	moveLeft = true;
+    	moveRight = false;
     	mouvement_float.moveLeft(bounds, velocity);
     }
     
-    public void moveRight(int velocity){
+    public void moveRight(int velocity)
+    {	moveLeft = false;
+    	moveRight = true;
     	mouvement_float.moveRight(bounds, velocity);
     }
     
     protected UserMovements mouvement_float;
-
-
 	
-	@Override
+    @Override
 	public void update()
 	{
-		if(!isDead){
+		if(!isDead)
+		{
 			checkKeyDown();
 			checkKeyUp();
 		}
@@ -129,9 +140,7 @@ public class Player extends Entity
 				isDead = false;
 			}
 		}
-		
 	} 
-	
 	
 	public void updateAdvancedCollisionRectangle()
 	{
@@ -154,69 +163,110 @@ public class Player extends Entity
 		advancedCollisionRectangle.y = bounds.y ;	
 	}
 	
-	private void checkKeyDown(){
+	private void checkKeyDown()
+	{
 			
 		if(!isDead || !isCollide){
 			stateTime += Gdx.graphics.getDeltaTime(); 
 			if(Gdx.input.isKeyPressed(Keys.UP)){
 				direction = UP;
 				currentAnimation = walkAnimation;
-
+				isMouving= true;
+				
+				moveLeft = false;
+		    	moveRight = false;
 			}
 			if(Gdx.input.isKeyPressed(Keys.DOWN)){
 				direction = DOWN;
 				currentAnimation = backAnimation;
-		      
+				isMouving= true;
+				
+				moveLeft = false;
+		    	moveRight = false;
 			}
 			if(Gdx.input.isKeyPressed(Keys.LEFT)){
 				direction = LEFT;
 				currentAnimation = leftAnimation;
-							
+				isMouving= true;	
+				
+		    	moveLeft = true;
+		    	moveRight = false;
 			}
 			if(Gdx.input.isKeyPressed(Keys.RIGHT)){
 				direction = RIGHT;
 				currentAnimation = rightAnimation;
-
+				isMouving= true;
+				
+		    	moveLeft = false;
+		    	moveRight = true;
 			}
 		}
 	}
 	
-	private void checkKeyUp(){
-		if(!isDead && !isCollide){
+	private void checkKeyUp()
+	{
+		if(!isDead && !isCollide)
+		{
 			if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT))
 			{
-				switch (direction) {
-	            case UP:  currentAnimation = walkStayAnimation;
-	                     break;
-	            case DOWN:  currentAnimation = backStayAnimation;
-	                     break;
-	            case LEFT:  currentAnimation = leftStayAnimation;
-	                     break;
-	            case RIGHT:  currentAnimation = rightStayAnimation;
-	                     break;
-	            default: currentAnimation = walkStayAnimation;
-	                     break;
+				switch (direction) 
+				{
+		            case UP:  
+		            	currentAnimation = walkStayAnimation ;
+		            	isMouving= false;
+		            	
+						moveLeft = false;
+				    	moveRight = false;
+		                break;
+		            case DOWN:  
+		            	currentAnimation = backStayAnimation;
+		            	isMouving= false;
+		            	
+						moveLeft = false;
+				    	moveRight = false;
+		                break;
+		            case LEFT:  
+		            	currentAnimation = leftStayAnimation;
+		            	isMouving= false;
+		            	
+						moveLeft = false;
+				    	moveRight = false;
+		                break;
+		            case RIGHT:  
+		            	currentAnimation = rightStayAnimation;
+		            	isMouving= false;
+		            	
+						moveLeft = false;
+				    	moveRight = false;
+		                break;
+		            default: currentAnimation = walkStayAnimation;
+		                     break;
 				}
 			}
 		}
 	}
 
-	public int getLife() {
+	public int getLife() 
+	{
 		return life;
 	}
 	
-	public void setLife(int life) {
+	public void setLife(int life)
+	{
 		this.life = life;
 	}
 
-	public boolean die(){
-		if(this.life == 0){
+	public boolean die()
+	{
+		if(this.life == 0)
+		{
 			isDead = true;
 			System.out.println("you're dead !");
 			
 			this.life = Constants.DEFAULT_LIFE;
 			return true;
-		}else{
+		}else
+		{
 			return false;
 		}
 	}

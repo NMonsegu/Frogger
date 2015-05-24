@@ -20,7 +20,6 @@ import edu.cesi.libgdx.frogger.utils.enums.GameStates;
 
 public class FroggerWorldRenderer 
 {
-
 	/**
 	 * This class contain the {@link SpriteBatch} .
 	 * It contain all the render behavior
@@ -29,17 +28,18 @@ public class FroggerWorldRenderer
     private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private Viewport viewport;
-	   
 	private MapManager mapManager;
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer mapRenderer;
-	private BitmapFont font;
-	  
+	private BitmapFont font; 
 	private LevelFrogger level;
-	
-	FroggerWorld world;
-	UIManager uiManager;	
+	private FroggerWorld world;
+	private UIManager uiManager;	
 	private Label labelScore;
+	
+	private BitmapFont timerBar;	
+	private long progress = 0;
+	private ShapeRenderer shapeRenderer = new ShapeRenderer();
 	
 	public FroggerWorldRenderer(FroggerWorld world)
 	{
@@ -58,8 +58,7 @@ public class FroggerWorldRenderer
 		  /*Create camera*/
 		  this.camera = new OrthographicCamera();
 
-		  /*
-		   * Create a StretchViewport. It allow to handle screen with the logical size
+		  /* Create a StretchViewport. It allow to handle screen with the logical size
 		   * The items positions will be define depending upon the Viewport. 
 		   * It allow to manage with differente resolution with a single and simple ItemPositionManager
 		   * This object is linked to an OrthographicCamera
@@ -82,29 +81,25 @@ public class FroggerWorldRenderer
 	      timerBar = new BitmapFont();
 	}
 	
-	BitmapFont timerBar;	
-	private long progress = 0;
-
 	
-
-	
-	public void resize(int width , int height){
+	public void resize(int width , int height)
+	{
 	      this.viewport.update(width,height);
 	      this.camera.position.set(camera.viewportWidth/2,camera.viewportHeight/2,0);
 	}
 	
-	public OrthographicCamera getCamera() {
+	public OrthographicCamera getCamera() 
+	{
 		return camera;
 	}
 
-	public Viewport getViewport() {
+	public Viewport getViewport() 
+	{
 		return viewport;
 	}
 	
-	/*debug collision*/
-	ShapeRenderer shapeRenderer = new ShapeRenderer();
-	
-    private String getFormattedSize(long size) {
+    private String getFormattedSize(long size) 
+    {
         String[] suffixes = new String[] { "octets", "Ko", "Mo", "Go", "To" };
  
         double tmpSize = size;
@@ -121,8 +116,6 @@ public class FroggerWorldRenderer
  
         return tmpSize + " " + suffixes[i];
     }
-    
-    
 
 	/**
 	 * Called by {@link FroggerWorld} at each cycle. It draw all graphics and manage the camera.
@@ -137,7 +130,6 @@ public class FroggerWorldRenderer
 
 		this.mapRenderer.render();
 	    this.labelScore.setText("Score : " + world.getScore());
-
 	    
 		this.batch.begin();
 		    labelScore.draw(batch, stateTime);
@@ -156,6 +148,7 @@ public class FroggerWorldRenderer
 	        timerBar.draw(batch, "Timer : " + progress , 800, 80);       
 		this.batch.end(); 
 		
+		world.getPlayer().updateAdvancedCollisionRectangle();
 		
 		shapeRenderer.begin(ShapeType.Filled);	
 	        shapeRenderer.setProjectionMatrix(camera.combined);
@@ -168,19 +161,21 @@ public class FroggerWorldRenderer
 	        shapeRenderer.setColor(Color.YELLOW);
 	        shapeRenderer.rect(800, 35, 60, 20);
 	        
-	        world.getPlayer().updateAdvancedCollisionRectangle();
-	        
 	        /*Debug*/
 			shapeRenderer.rect(world.getPlayer().getAdvancedCollisionRectangle().getX(), world.getPlayer().getAdvancedCollisionRectangle().getY(), world.getPlayer().getAdvancedCollisionRectangle().getWidth(),world.getPlayer().getAdvancedCollisionRectangle().getHeight()); 
-			//shapeRenderer.rect(world.getPlayer().getBounds().getX(), world.getPlayer().getBounds().getY(), world.getPlayer().getBounds().getWidth(),world.getPlayer().getBounds().getHeight()); 
-
+			shapeRenderer.rect(world.getPlayer().getBounds().getX(), world.getPlayer().getBounds().getY(), world.getPlayer().getBounds().getWidth(),world.getPlayer().getBounds().getHeight()); 
 	    shapeRenderer.end();
-	
-		
-		
-		
 	}
 	
-	
+	public void dispose()
+	{
+	    batch.dispose();
+	    shapeRenderer.dispose();
+		map.dispose();
+		mapRenderer.dispose();
+		font.dispose();
+		timerBar.dispose();
+		System.out.println("Frogger World renderer  dispose");
+	}
 
 }

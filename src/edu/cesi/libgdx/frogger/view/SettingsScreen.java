@@ -362,8 +362,13 @@ public class SettingsScreen implements Screen
 	}
 
 	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
+	public void dispose() 
+	{
+		this.background.dispose();
+		this.batch.dispose();
+		this.stage.dispose();
+		this.skin.dispose();
+		System.out.println("Settings Screen dispose");
 		
 	}
 

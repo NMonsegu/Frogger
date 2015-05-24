@@ -12,40 +12,68 @@ public class AudioManager
 	 **/
 	
 	private Sound hit;  
-	///private Sound win;
-	//private Sound gameOver;
-	
+	private Music move;
 	private Sound click;
 	private Music ambianceMusic;
-	private AudioManager(){
+	private Sound timerEnd;
+	private Sound timeout;
+	private Sound win;
+	private Sound gameOver;
+	
+	
+	private AudioManager()
+	{
 	}
 	
-	private static class AudioManagerHolder{
+	private static class AudioManagerHolder
+	{
 		private final static AudioManager instance = new AudioManager();
 	}
 	
-	public static AudioManager getInstance(){
+	public static AudioManager getInstance()
+	{
 		return AudioManagerHolder.instance;
 	}
 	
     public void loadSound() 
     {  
-
         this.hit      = loadSound("audio/hit.wav");  
         this.click    = loadSound("audio/click.wav");
-
+    	this.timerEnd = loadSound("audio/timerend.wav");  
+    	this.timeout = loadSound("audio/timeout.wav");  
+    	this.win = loadSound("audio/win.wav");
+    	this.gameOver = loadSound("audio/gameover.wav");  
     }  
     
-    public void loadMusic()
+    public Sound getTimerEnd() {
+		return timerEnd;
+	}
+
+	public Sound getTimeout() {
+		return timeout;
+	}
+
+	public Sound getWin() {
+		return win;
+	}
+
+	public Sound getGameOver() {
+		return gameOver;
+	}
+
+	public void loadMusic()
     {
 	    this.ambianceMusic =  loadMusic("audio/music.mp3");
+	    this.move    = loadMusic("audio/move.wav");
+	     
     }
     
     /**
      * Play music looping.
      * @param music must be a {@link Music}
      */
-    public void playMusic(Music music){
+    public void playMusic(Music music)
+    {
     	music.setVolume(0.5f);                 
     	music.setLooping(true); 
     	music.play();
@@ -55,7 +83,8 @@ public class AudioManager
      * Stop music.
      * @param music must be a {@link Music}
      */
-    public void stopMusic(Music music){
+    public void stopMusic(Music music)
+    {
     	music.stop();
     }
 
@@ -63,8 +92,10 @@ public class AudioManager
      * Play a sound .
      * @param sound must be a {@link Sound}
      */
-    public void playSound (Sound sound) {  
-        sound.play(1,2f,0);  
+    public void playSound (Sound sound)
+    {  
+        //sound.play(1,2f,0);  
+    	 sound.play(); 
     }  
 	
     /**Unload musics and sounds*/
@@ -78,20 +109,29 @@ public class AudioManager
 	 * Load music files 
 	 * @param filename : music name
 	 * */
-    private Music loadMusic(String filename){
+    private Music loadMusic(String filename)
+    {
 
     		return Gdx.audio.newMusic(Gdx.files.internal(filename)); 
     }
     /***/
-    private Sound loadSound (String filename) { 
+    private Sound loadSound (String filename) 
+    { 
     		return Gdx.audio.newSound(Gdx.files.internal(filename));  
     }
 
-	public Sound getHit() {
+	public Sound getHit()
+	{
 		return hit;
 	}
 
-	public Music getAmbianceMusic() {
+	public Music getAmbianceMusic() 
+	{
 		return ambianceMusic;
 	}  
+	
+	public Music getMove()
+	{
+		return this.move;
+	}
 }

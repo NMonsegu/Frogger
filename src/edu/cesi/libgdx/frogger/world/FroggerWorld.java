@@ -47,7 +47,7 @@ public class FroggerWorld
 		this.difficulty = Levels.valueOf(this.mainGame.settingsManager.getCurrentStateLevel());
 		this.soundState = this.mainGame.settingsManager.isCurrentStateSound();
 				
-		difficultyManager = new DifficultyManager(difficulty);
+		this.difficultyManager = new DifficultyManager(difficulty);
 	    
 		/*World items*/
         this.player = new Player();   
@@ -65,19 +65,21 @@ public class FroggerWorld
         inputMultiplexer.addProcessor(pauseStage);
         Gdx.input.setInputProcessor(inputMultiplexer);
         
-	
         this.playMusic();
 	}
 	
-	public int getScore(){
+	public int getScore()
+	{
 		return this.score.getScore();
 	}
 	
-	public long getTimer(){
+	public long getTimer()
+	{
 		return this.timer.getTimer();
 	}
 
-	public FroggerScreen getFroggerScreen() {
+	public FroggerScreen getFroggerScreen()
+	{
 		return froggerScreen;
 	}
 
@@ -101,14 +103,12 @@ public class FroggerWorld
 		return false;
 	}
 	
-	
 	/** Play the pause menu*/
 	public void updatePauseGame()
 	{
-			pauseStage.act();
-			pauseStage.draw();
+		pauseStage.act();
+		pauseStage.draw();
 	}
-	
 	
 	/**Control the keys pressed to switch between game/pause */
 	private void updateGameState()
@@ -129,37 +129,56 @@ public class FroggerWorld
 			}
 		}
 	}
+	
 	long tmpTimer;
+	boolean playTimer = false;
 	/**Update the non graphic game logic*/
-	private void updateInGame(){
+	private void updateInGame()
+	{
+        if(player.isMouving)
+        {
+    		if(soundState)
+    		{
+    			mainGame.audioManager.playMusic(mainGame.audioManager.getMove());
+    		}
+        }else
+        {
+        	mainGame.audioManager.stopMusic(mainGame.audioManager.getMove());
+        }
+		
 		player.update();
 		this.timer.updateTimers();
-		 tmpTimer = this.timer.getTimer();
+		tmpTimer = this.timer.getTimer();
 		
-		if(tmpTimer <= 0)
+		if(tmpTimer <= 3){
+			if(!playTimer){
+				this.playTimerEnd();
+				this.playTimer = true;
+			}
+		}
+		int tier = level.getPlayerTier(player);
+		
+		if(tier == 0 || tier == 2)
 		{
-			this.gamestate = GameStates.GAMEOVER;
-		 	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
-			.setScreen(new EndLevelScreen(gamestate,score));
-        	return;
-		}        
+			player.move(difficultyManager.getVelocityPlayer());
+	        boolean is = level.isCollideFistTier(player);
+	        if(is)
+	        {
+	        	this.playHit();
+	        	level.applyCollisionEffectToPlayer(player);
+	        }
+		}else if(tier ==1)
+		{
+			player.move(difficultyManager.getVelocityPlayer());
+			
+	        boolean isColideSecondTier = level.isCollideSecondTier(player);
+	        if(isColideSecondTier)
+	        {
+	        	this.playHit();
+	        	level.applyCollisionEffectToPlayer(player);
+	        }
+		}
 		
-        player.move(difficultyManager.getVelocityPlayer());
-        
-        boolean is = level.isCollideFistTier(player);
-        if(is)
-        {
-        	this.playHit();
-        	level.applyCollisionEffectToPlayer(player);
-        }
-        
-        boolean isColideSecondTier = level.isCollideSecondTier(player);
-        if(isColideSecondTier)
-        {
-        	this.playHit();
-        	level.applyCollisionEffectToPlayer(player);
-        }
-
         score.increaseScore(player.getPosition().x, player.getPosition().y);
         
         if(level.isAtHome(player))
@@ -167,35 +186,56 @@ public class FroggerWorld
         	score.setScore(score.getScore() + 50);//Bonus
         	score.setLastMaxPosition(new Vector2(50,50));
         }
-        if(level.isGameFinish(player))
-        {
-        	this.gamestate = GameStates.WIN;
+        
+		if(tmpTimer <= 0)
+		{
+			this.gamestate = GameStates.GAMEOVER;
+			this.playTimeout();
+		 	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
+			.setScreen(new EndLevelScreen(gamestate,score));
+        	return;
+		} 
+        
+        if(player.die())
+        {	
+        	level.resetLevel();
+        	this.gamestate = GameStates.GAMEOVER;
+        	this.playGameOver();
+        	this.stopMusics();
         	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
 			.setScreen(new EndLevelScreen(gamestate,score));
         	return;
         }
         
-        if(player.die())
-        {	
-        	score.resetScore();	
-        	level.resetLevel();
-        	this.gamestate = GameStates.GAMEOVER;
-        	
+        if(level.isGameFinish(player))
+        {
+        	this.gamestate = GameStates.WIN;
+        	this.playWin();
+        	this.stopMusics();
         	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
 			.setScreen(new EndLevelScreen(gamestate,score));
+        	return;
         }
 	}
 	
-	public PauseStage getPauseStage() {
+	private void stopMusics()
+	{
+		mainGame.audioManager.stopMusic(mainGame.audioManager.getAmbianceMusic());
+		mainGame.audioManager.stopMusic(mainGame.audioManager.getMove());
+	}
+	
+	public PauseStage getPauseStage() 
+	{
 		return pauseStage;
 	}
 
-	
-	public LevelFrogger getLevel() {
+	public LevelFrogger getLevel() 
+	{
 		return level;
 	}
 
-	public DifficultyManager getDifficultyManager() {
+	public DifficultyManager getDifficultyManager() 
+	{
 		return difficultyManager;
 	}
 
@@ -213,6 +253,7 @@ public class FroggerWorld
 	/**
 	 * Play hit song
 	 * */
+	
 	private void playHit()
 	{
 		if(soundState)
@@ -220,7 +261,35 @@ public class FroggerWorld
 			mainGame.audioManager.playSound(mainGame.audioManager.getHit());
 		}
 	}
-
+	
+	private void playGameOver(){
+		if(soundState)
+		{
+			mainGame.audioManager.playSound(mainGame.audioManager.getGameOver());
+		}
+	}
+	
+	private void playTimeout(){
+		if(soundState)
+		{
+			mainGame.audioManager.playSound(mainGame.audioManager.getTimeout());
+		}
+	}
+	
+	private void playTimerEnd(){
+		if(soundState)
+		{
+			mainGame.audioManager.playSound(mainGame.audioManager.getTimerEnd());
+		}
+	}
+	
+	private void playWin(){
+		if(soundState)
+		{
+			mainGame.audioManager.playSound(mainGame.audioManager.getWin());
+		}
+	}
+	
 	/**
 	 * Reset the level (Score, timer, position)
 	 * */
@@ -239,5 +308,10 @@ public class FroggerWorld
 	
 	public GameStates getGameState(){
 		return this.gamestate;
+	}
+
+	public void dispose(){
+		pauseStage.dispose();
+		System.out.println("froggerWorld dispose");
 	}
 }

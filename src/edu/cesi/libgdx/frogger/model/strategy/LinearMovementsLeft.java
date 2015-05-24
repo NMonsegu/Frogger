@@ -17,7 +17,7 @@ public class LinearMovementsLeft implements MovementBehavior{
 	public void move(Rectangle bounds, int velocity) {
 		bounds.x -= velocity ;
 		
-		if(bounds.x == 0 - bounds.width)
+		if(bounds.x <= 0 - bounds.width )//
 		{
 			bounds.x = Constants.DEFAULT_POSITION_FIREBALL_X;
 		}

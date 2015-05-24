@@ -1,11 +1,12 @@
 package edu.cesi.libgdx.frogger.controler;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 
 import edu.cesi.libgdx.frogger.data.AudioManager;
 import edu.cesi.libgdx.frogger.data.ImagesManager;
 import edu.cesi.libgdx.frogger.data.SettingsManager;
-import edu.cesi.libgdx.frogger.utils.enums.Levels;
 import edu.cesi.libgdx.frogger.view.menu.MenuScreen;
 
 public class MainGame extends Game {
@@ -20,7 +21,6 @@ public class MainGame extends Game {
 	MenuScreen menuscreen;
 	public SettingsManager settingsManager;
 	public AudioManager audioManager;
-	private Levels lvl;
 
 	/**Called when the application is created.It load all datas then show the {@link}MenuScreen */
 	public void create() 
@@ -40,11 +40,23 @@ public class MainGame extends Game {
 		this.imageManager.loadTextureRegion();
 		
 		try{
-			setScreen(new MenuScreen());
+			this.setScreen(new MenuScreen());
 		}catch(Exception e){
 			System.out.println(e);
 		}
 		
+	}
+	
+	@Override
+	public void setScreen (Screen screen) {
+		Screen tmp = this.screen;
+		if (this.screen != null) this.screen.hide();
+		this.screen = screen;
+		if (this.screen != null) {
+			this.screen.show();
+			this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		}
+		tmp.dispose();
 	}
 
 	/** Called when the application is destroyed*/

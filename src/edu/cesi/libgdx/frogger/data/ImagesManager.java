@@ -110,9 +110,7 @@ public class ImagesManager
 		bigBushsTextureRegion[0]    = manager.get(Constants.bushsTextureAtlas,TextureAtlas.class).findRegion("bigBush");
 		smallBushsTextureRegion[0]    = manager.get(Constants.bushsTextureAtlas,TextureAtlas.class).findRegion("smallBush");
 		medimBushsTextureRegion[0]    = manager.get(Constants.bushsTextureAtlas,TextureAtlas.class).findRegion("mediumBush");
-		
-		progressBar = manager.get(Constants.progressBarTextureAtlas,TextureAtlas.class).findRegions("loading-bar-anim");
-		
+				
 		
 	}
 	

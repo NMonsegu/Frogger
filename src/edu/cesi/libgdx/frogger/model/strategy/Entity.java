@@ -10,11 +10,13 @@ public abstract class Entity {
     
 	
 	 	protected Animation currentAnimation;
-
 		protected Rectangle bounds;
 	    protected float stateTime;
 	    protected ImagesManager imageManager = ImagesManager.getInstance();
 	 
+
+	    
+	    
 	    public Rectangle getBounds() {
 			return bounds;
 		}
@@ -71,7 +73,6 @@ public abstract class Entity {
 	    	this.bounds.x = x;
 	    	this.bounds.y = y;
 	    }
-	    
 	    
 	    public void setMovement(MovementBehavior newMovement){this.mouvement = newMovement;}
 	  

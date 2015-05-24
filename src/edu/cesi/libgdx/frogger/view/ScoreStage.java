@@ -66,6 +66,7 @@ public class ScoreStage extends Stage
 			public void changed(ChangeEvent event, Actor actor) {
 		    	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
 				.setScreen(new MenuScreen());
+		    	//dispose();
 			}
 		});
 		this.addActor(mainMenu);

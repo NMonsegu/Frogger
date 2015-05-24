@@ -16,8 +16,8 @@ public class LinearMovementsRight implements MovementBehavior{
 	@Override
 	public void move(Rectangle bounds,int velocity) {
 		bounds.x += velocity ;
-		
-		if(bounds.x == 1200 )
+		System.out.println("ON MOVE ");
+		if(bounds.x >= 1200 + bounds.width)
 		{
 			bounds.x = Constants.DEFAULT_POSITION_SHURIKEN_X;
 		}

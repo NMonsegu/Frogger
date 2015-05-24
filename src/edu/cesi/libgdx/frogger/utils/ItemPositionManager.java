@@ -21,7 +21,6 @@ public class ItemPositionManager
 	
 	private void loadData()
 	{
-
 		loadPositionFireBalls_1200x800();
 		loadPositionBarrels_1200x800();
 		loadPositionShurikens_1200x800();
@@ -30,23 +29,26 @@ public class ItemPositionManager
 		loadPositionBigBushs_1200x800();
 		loadPositionMediumBushs_1200x800();
 		loadPositionSmallBushs_1200x800();
-		
 	}
 	
 	private void loadPositionFireBalls_1200x800(){
 		positionFireballs = new Vector2[Constants.NUMBER_OF_FIREBALL_HARD];
 		
-		positionFireballs[0] = new Vector2(1000  , 140);   //y = 140   -Collone 1
+		positionFireballs[0] = new Vector2(1000  , 135);   //y = 140   -Collone 1
 		positionFireballs[1] = new Vector2(1200  , 350);   //y = 350   -Collone 5 
 		positionFireballs[2] = new Vector2(200   , 240);   //y = 240   -Collone 3
 		
-		positionFireballs[3] = new Vector2(400   , 140);
+		positionFireballs[3] = new Vector2(400   , 135);
 		positionFireballs[4] = new Vector2(600   , 350);
 		positionFireballs[5] = new Vector2(800   , 240);  
 		
-		positionFireballs[6] = new Vector2(1050  , 140);
+		positionFireballs[6] = new Vector2(1050  , 135);
 		positionFireballs[7] = new Vector2(1100  , 350);
 		positionFireballs[8] = new Vector2(1250  , 240);
+		
+		positionFireballs[9] = new Vector2(500  , 135);
+		positionFireballs[10] = new Vector2(700  , 350);
+		positionFireballs[11] = new Vector2(900  , 240);
 	}
 	
 	private void loadPositionShurikens_1200x800(){
@@ -63,12 +65,16 @@ public class ItemPositionManager
 		positionShurikens[6] = new Vector2(1050 , 180);
 		positionShurikens[7] = new Vector2(1100 , 180);
 		positionShurikens[8] = new Vector2(1250 , 260);
+		
+		positionShurikens[9] = new Vector2(1100 , 180);
+		positionShurikens[10] = new Vector2(950 , 180);
+		positionShurikens[11] = new Vector2(730 , 260);
 	}
 	
 	
 	
 	private void loadPositionBarrels_1200x800(){
-		positionBarrels = new Vector2[Constants.NUMBER_OF_FIREBALL_HARD];
+		positionBarrels = new Vector2[Constants.NUMBER_OF_BARREL_HARD];
 		
 		positionBarrels[0] = new Vector2(1000 , 540); //y = 420  Collonne 1 
 		positionBarrels[1] = new Vector2(1200 , 540);
@@ -83,6 +89,14 @@ public class ItemPositionManager
 		positionBarrels[7] = new Vector2(1100 , 460);
 		
 		positionBarrels[8] = new Vector2(1250 , 460);
+		
+		
+		positionBarrels[9] = new Vector2(30 , 540);
+		positionBarrels[10] = new Vector2(700 , 460);
+		
+		positionBarrels[11] = new Vector2(1250 , 460);
+		
+		positionBarrels[12] = new Vector2(500 , 540);
 	}
 	
 	private void loadPositionBigBushs_1200x800()
@@ -169,10 +183,6 @@ public class ItemPositionManager
 	public Vector2[] getPositionHeart(){
 		return this.positionHearts;
 	}
-	
-	//public Vector2[] getPositionScore(){
-		
-	//} 
 	
 	public Vector2[] getPositionFlags(){
 			return this.positionFlags;

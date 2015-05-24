@@ -63,7 +63,9 @@ import edu.cesi.libgdx.frogger.data.RessourceManagerMenu;
 
 		@Override
 		public void dispose() {
-			// TODO Auto-generated method stub
+			  //rm.dispose();
+		      //menuStage.dispose();
+		      System.out.println("MenuScreen dispose");
 		}
 
 	}

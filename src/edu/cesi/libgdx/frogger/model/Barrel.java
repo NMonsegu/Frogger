@@ -1,6 +1,7 @@
 package edu.cesi.libgdx.frogger.model;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 import edu.cesi.libgdx.frogger.model.strategy.Entity;
@@ -8,12 +9,18 @@ import edu.cesi.libgdx.frogger.model.strategy.LinearMovementsRight;
 
 public class Barrel extends Entity
 {
+	private Animation barrelAnimationGutter;
+	private boolean isTrap = false;
 
-	private Animation barrelAnimation;
+	public void setTrap(boolean isTrap) {
+		this.isTrap = isTrap;
+	}
 	
+	public boolean getTrap(){
+		return this.isTrap;
+	}
 
 	public Barrel(){
-		//stextureAtlas = new TextureAtlas(Gdx.files.internal(url));
         bounds = new Rectangle();            
         bounds.x = 0;
         bounds.y = 0;                         
@@ -23,14 +30,15 @@ public class Barrel extends Entity
          
         loadAnimation();
 
-        currentAnimation = barrelAnimation;
-        //this.mouvement = new LinearMovementsLeft();
+        currentAnimation = barrelAnimationGutter;
         this.mouvement = new LinearMovementsRight();
 
 	}
 	
-	private void loadAnimation(){
-
-		barrelAnimation = new Animation(0.6f,imageManager.getBarrelTextureRegion());
+	private void loadAnimation()
+	{
+		TextureRegion[] tmp = imageManager.getBarrelTextureRegion();
+		barrelAnimationGutter = new Animation(0.6f,tmp);
+		
 	}
 }

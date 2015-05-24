@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import edu.cesi.libgdx.frogger.model.AtHomeFrogger;
@@ -35,7 +33,7 @@ public class LevelFrogger
 	private ArrayList<Entity> fireBallsList = new ArrayList<Entity>() ;
 	private ArrayList<Entity> shurikensList = new ArrayList<Entity>();
 	private ArrayList<Entity> flagsList = new ArrayList<Entity>();
-	private ArrayList<Entity> barrelsList = new ArrayList<Entity>();
+	private ArrayList<Barrel> barrelsList = new ArrayList<Barrel>();
 	private ArrayList<Entity> winPlayerList = new ArrayList<Entity>();
 	private ArrayList<Entity> heartList = new ArrayList<Entity>();
 	
@@ -54,7 +52,9 @@ public class LevelFrogger
 	private int numberOfBarrels;
 	
 	private int velocityItem;
-	private int velocityPlayer;
+	//private int velocityItem2;
+	
+	//private int velocityPlayer;
 	
 	private Vector2[] fireballPosition;
 	private Vector2[] shurikenPosition;
@@ -65,7 +65,6 @@ public class LevelFrogger
 	
 	private Vector2[] heartsPosition;
 	private Vector2[] flagsPosition;
-	
 	
 	public LevelFrogger(DifficultyManager difficutyManager){
 		this.difficutyManager = difficutyManager;
@@ -85,7 +84,9 @@ public class LevelFrogger
 		numberOfShurikens = this.difficutyManager.getNumberOfShurikenToDraw();
 		numberOfBarrels   = this.difficutyManager.getNumberOfBarrelToDraw();
 		velocityItem      = this.difficutyManager.getVelocityItem();
-		velocityPlayer    = this.difficutyManager.getVelocityPlayer();
+		//velocityItem2 = Constants.VELOCITY_ITEM_EASY_2;
+		
+		//velocityPlayer    = this.difficutyManager.getVelocityPlayer();
 	}
 
 	public void createElements()
@@ -103,7 +104,8 @@ public class LevelFrogger
 		this.createFly();
 	}
 	
-	public void resetLevel(){
+	public void resetLevel()
+	{
 		this.createHeart();
 		this.winPlayerList = new ArrayList<Entity>();
 	}
@@ -129,6 +131,21 @@ public class LevelFrogger
 		this.updateSmallBush( stateTime, batch);
 	}
 	
+	public int getPlayerTier(Player player)
+	{
+		if(player.getPosition().y < Constants.TIER_2_Y)
+		{
+			return 0;
+		}
+		else if(player.getPosition().y > Constants.TIER_2_Y && player.getPosition().y < Constants.TIER_3_Y)
+		{
+			return 1;
+		}else 
+		{
+			return 2;
+		}
+	}
+	
 	public boolean isCollide(Player player)
 	{
 		if(player.getPosition().y < Constants.TIER_2_Y)
@@ -144,7 +161,6 @@ public class LevelFrogger
 		return false;
 	}
 	
-	
 	/**Check it the player is dead or has win
 	 * @return boolean
 	 * */
@@ -155,9 +171,6 @@ public class LevelFrogger
 		}
 		return false;
 	}
-	
-
-	
 	
 	/*Create elements*/
 	
@@ -172,7 +185,8 @@ public class LevelFrogger
 	private long tmp =System.currentTimeMillis()/1000;
 	private long timeRef = tmp;
 	
-	private void setRandomPositionFly(){
+	private void setRandomPositionFly()
+	{
 		int position = getRandomInt(0,Constants.NUMBER_OF_FLAG -1);
 		fly.setPosition(flagsPosition[position].x, flagsPosition[position].y);
 	}
@@ -215,14 +229,6 @@ public class LevelFrogger
 		}
 	}
 	
-	private void createBarrels(){
-		for (int i = 0; i < numberOfBarrels; i++){
-			Entity tmp = new Barrel();
-			tmp.setPosition(barrelPosition[i].x,barrelPosition[i].y);
-			barrelsList.add(tmp);
-		}
-	}
-	
 	private void createShurikens(){
 		for (int i = 0; i < numberOfShurikens; i++){
 			Entity tmp = new Shuriken();
@@ -255,15 +261,12 @@ public class LevelFrogger
 		}
 	}
 	
-
-
 	private void createWinPlayer(float x, float y)
 	{
 		Entity winplayer = new AtHomeFrogger();
 		winplayer.setPosition(x,y);
 		winPlayerList.add(winplayer);
 	}
-	
 	/* Update elements */
 	
 	private void updateFireBalls(float stateTime, SpriteBatch batch)
@@ -295,15 +298,100 @@ public class LevelFrogger
 			flag.move(velocityItem);
 		}
 	}
+	
+	int trap1 = 0;
+	int trap2 = 0;
+	int trap3 = 0;
+	int trap4 = 0;
+	
+	private void createTrappedBarrels()
+	{
+		trap1 = getRandomInt(0,numberOfBarrels);
+		trap2 = getRandomInt(0,numberOfBarrels);
+		trap3 = getRandomInt(0,numberOfBarrels);
+		trap4 = getRandomInt(0,numberOfBarrels);
 		
+		int i = 0;
+		for (Barrel barrel : barrelsList) 
+		{
+			barrel.setTrap(false);
+			if(i == trap1 || i == trap2 || i == trap3|| i == trap4)
+			{
+				barrel.setTrap(true);
+			}else
+			{
+				barrel.setTrap(false);
+			}
+			i ++ ;
+		}
+	}
+	
+	private void createBarrels(){	
+		for (int i = 0; i < numberOfBarrels; i++)
+		{
+			Barrel tmp = new Barrel();
+			tmp.setPosition(barrelPosition[i].x,barrelPosition[i].y);
+			barrelsList.add(tmp);
+		}
+		createTrappedBarrels();
+	}
+	
+	boolean test = true;
 	private void updateBarrels(float stateTime, SpriteBatch batch)
 	{
-		for (Entity barrel : barrelsList) 
-		{
-			barrel.setStateTime(stateTime);
+		for (Barrel barrel : barrelsList) 
+		{	
+			if(!barrel.getTrap())
+			{
+				barrel.setStateTime(0.3f);
+			}else
+			{
+				barrel.setStateTime(stateTime);
+			}
 			barrel.drawAnimation(batch);
 			barrel.move(velocityItem);
 		}
+		
+		if(mustResetBarrelTrap())
+		{
+			if(!test)
+			{
+				createTrappedBarrels();
+				test = true;
+				System.out.println("must");
+				try {
+					Thread.sleep(60);
+				} catch (InterruptedException e) {
+					
+					e.printStackTrace();
+				}
+			}
+		}else
+		{
+			test = false;
+		}
+	}
+	
+	private boolean isBarrelFullInWatter(Barrel barrel)
+	{	
+		if(barrel.getCurrentAnimation().getKeyFrameIndex(barrel.getStateTime()%3)== 4){
+			System.out.println("barrel");
+			System.out.println(barrel.getTrap());
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean mustResetBarrelTrap(){
+		//2.9942987f 
+		for (Entity barrel : barrelsList)
+		{
+			if(barrel.getStateTime()%3 >= 2.934f )
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void updateBigBush(float stateTime, SpriteBatch batch)
@@ -378,13 +466,13 @@ public class LevelFrogger
 	}
 	
 	
+	
+	/*Collisions*/
 	public void applyCollisionEffectToPlayer(Player player){
 		player.setLife(player.getLife()-1);
 		player.setPosition(50, 50);
 		heartList.remove(0);
 	}
-	
-	
 	
 	public boolean isCollideFistTier(Player player)
 	{
@@ -392,133 +480,23 @@ public class LevelFrogger
 		{
 			player.setWidthBounds(60);
 			player.setHeightBounds(70);
-			for (Entity fireball : fireBallsList) 
-			{
-				if(player.getPosition().overlaps(fireball.getPosition())){
-					//this.applyCollisionEffectToPlayer(player);
-					return true;
-				}
-			}
+			
+			if(this.simpleCollision(player, fireBallsList)) return true;
+			if(this.simpleCollision(player, shurikensList))return true;
+		}
+		return false;
+	}
+	
+	private boolean simpleCollision(Player player,ArrayList<Entity>  entityList ){
+		for (Entity entity : entityList) 
+		{
+			if(player.getPosition().overlaps(entity.getPosition()))return true;
 		}
 		return false;
 	}
 	
 	public boolean isCollideSecondTier(Player player)
 	{
-		/*if(player.getPosition().y > Constants.TIER_2_Y && player.getPosition().y < Constants.TIER_3_Y)
-		{
-			player.setWidthBounds(32);
-			player.setHeightBounds(32);
-			boolean isCollide = false;
-			boolean isFloating = false;
-					
-			for (Entity bigBush : bigBushList) 
-			{
-				if(!isCollide)
-				{
-					
-					if(player.getPosition().overlaps(bigBush.getPosition())){
-						
-						//if (player.getPosition().x - player.getHeight()/4 > bigBush.getPosition().x)
-						//{
-						//	System.out.println("ok");
-						//}
-						isCollide = true;
-						
-						if(player.getPosition().x + player.getHeight()/2 >= bigBush.getPosition().x &&  player.getPosition().y + player.getWidht()/2 >= bigBush.getPosition().y)
-						{					
-							
-							if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT)&& !Gdx.input.isKeyPressed(Keys.RIGHT))
-							{
-								if(!isFloating)
-								{
-									player.isFloating = true;
-	
-									player.moveLeft(velocityItem);									
-									return false;
-								}
-							}	
-						} 
-					}
-				}
-			}
-			
-			for (Entity mediumBush : mediumBushList) 
-			{
-				if(!isCollide)
-				{
-					if(player.getPosition().overlaps(mediumBush.getPosition())){
-						isCollide = true;
-						testCollisionIntersection(player,mediumBush);
-						if(player.getPosition().x + player.getHeight()/2 >= mediumBush.getPosition().x &&  player.getPosition().y + player.getWidht()/2 >= mediumBush.getPosition().y)
-						{
-							if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT)&& !Gdx.input.isKeyPressed(Keys.RIGHT))
-							{
-								if(!isFloating){
-									isFloating = true;
-									//player.setPosition(player.getPosition().x,mediumBush.getPosition().y);
-									player.moveLeft(velocityItem);
-									return false;
-								}
-								
-							}
-						}
-					}
-				}
-			}
-			
-			for (Entity smallBush : smallBushList) 
-			{
-				if(!isCollide)
-				{
-					if(player.getPosition().overlaps(smallBush.getPosition())){
-						isCollide = true;
-						if(player.getPosition().x + player.getHeight()/2 >= smallBush.getPosition().x &&  player.getPosition().y + player.getWidht()/2 >= smallBush.getPosition().y)
-						{
-							if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT)&& !Gdx.input.isKeyPressed(Keys.RIGHT))
-							{
-								if(!isFloating){
-									isFloating = true;
-									player.moveLeft(velocityItem);
-									return false;
-								}
-	
-							}				
-						}
-					}
-				}
-			}
-			
-			for (Entity barrel : barrelsList) 
-			{
-				if(player.getPosition().overlaps(barrel.getPosition())){
-					
-					if(player.getPosition().x + player.getHeight()/2 >= barrel.getPosition().x &&  player.getPosition().y + player.getWidht()/2 >= barrel.getPosition().y)
-					{
-						isCollide = true;
-						if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT)&& !Gdx.input.isKeyPressed(Keys.RIGHT))
-						{
-							if(!isFloating){
-								//player.setPosition(barrel.getPosition().x, barrel.getPosition().y);
-								player.moveRight(velocityItem);
-								isFloating = true;
-								//return false;
-							}
-						}				
-						if(barrel.getStateTime() % 3 >= 2.7){
-							return true;
-						}
-					}
-				}
-			}
-			
-			if(!isCollide)
-			{
-				System.out.println("NO COLIDE");
-				return true;
-			}
-		}
-		return false; */
 		return testCollisionAdvancedRectangle(player);
 	}
 	
@@ -528,27 +506,34 @@ public class LevelFrogger
 		{
 
 			boolean isCollide = false;
-			boolean isFloating = false;
+			player.isFloating = false;
 
 			for (Entity bigBush : bigBushList) 
 			{
 				if(!isCollide)
 				{
-					
-					if(player.getAdvancedCollisionRectangle().overlaps(bigBush.getPosition())){
-						
+					if(player.getAdvancedCollisionRectangle().overlaps(bigBush.getPosition()))
+					{
 						isCollide = true;
-						
 						if(player.getAdvancedCollisionRectangle().x + player.getAdvancedCollisionRectangle().getHeight()/2 >= bigBush.getPosition().x &&  player.getAdvancedCollisionRectangle().y + player.getAdvancedCollisionRectangle().getWidth()/2 >= bigBush.getPosition().y)
 						{					
+							if(!player.moveLeft)
+							{
+								player.moveLeft(velocityItem);
+
+							}else
+							{
+								player.moveLeft(velocityItem-(Constants.VELOCITY_PLAYER - velocityItem));
+							}
 							
 							if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT)&& !Gdx.input.isKeyPressed(Keys.RIGHT))
 							{
-								if(!isFloating)
+								if(!player.isFloating)
 								{
 									player.isFloating = true;
-	
-									player.moveLeft(velocityItem);									
+									if(!player.isMouving){
+										//player.moveLeft(velocityItem);
+									}							
 									return false;
 								}
 							}	
@@ -556,7 +541,6 @@ public class LevelFrogger
 					}
 				}
 			}
-			
 			
 			for (Entity smallBush : smallBushList) 
 			{
@@ -566,92 +550,100 @@ public class LevelFrogger
 						isCollide = true;
 						if(player.getAdvancedCollisionRectangle().x + player.getAdvancedCollisionRectangle().getHeight()/2 >= smallBush.getPosition().x &&  player.getAdvancedCollisionRectangle().y + player.getAdvancedCollisionRectangle().getWidth()/2 >= smallBush.getPosition().y)
 						{
+							if(!player.moveLeft)
+							{
+								player.moveLeft(velocityItem);
+
+							}else
+							{
+								player.moveLeft(velocityItem-(Constants.VELOCITY_PLAYER - velocityItem));
+							}
+							
 							if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT)&& !Gdx.input.isKeyPressed(Keys.RIGHT))
 							{
-								if(!isFloating){
-									isFloating = true;
-									player.moveLeft(velocityItem);
+								if(!player.isFloating){
+									player.isFloating = true;
+									
+									if(!player.isMouving){
+										//player.moveLeft(velocityItem);
+									}
 									return false;
 								}
-	
 							}				
 						}
 					}
 				}
 			}
 			
-			
 			for (Entity mediumBush : mediumBushList) 
 			{
 				if(!isCollide)
 				{
-					
 					if(player.getAdvancedCollisionRectangle().overlaps(mediumBush.getPosition()))
 					{
 						isCollide = true;
 						if(player.getAdvancedCollisionRectangle().x + player.getAdvancedCollisionRectangle().height/2 >= mediumBush.getPosition().x &&  player.getAdvancedCollisionRectangle().y + player.getAdvancedCollisionRectangle().getWidth()/2 >= mediumBush.getPosition().y)
 						{
+							if(!player.moveLeft)
+							{
+								player.moveLeft(velocityItem);
+
+							}else
+							{
+								player.moveLeft(velocityItem-(Constants.VELOCITY_PLAYER - velocityItem));
+							}
+							
 							if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT)&& !Gdx.input.isKeyPressed(Keys.RIGHT))
 							{
-								if(!isFloating)
+								if(!player.isFloating)
 								{
-									isFloating = true;
-									//player.setPosition(player.getPosition().x,mediumBush.getPosition().y);
-									player.moveLeft(velocityItem);
+									player.isFloating = true;
+									if(!player.isMouving){
+										//player.moveLeft(velocityItem);
+									}
 									return false;
 								}
-								
 							}
 						}
+					}
 				}
 			}
 			
-			
-			for (Entity barrel : barrelsList) 
+			for (Barrel barrel : barrelsList) 
 			{
-				if(player.getAdvancedCollisionRectangle().overlaps(barrel.getPosition())){
+				if(player.getAdvancedCollisionRectangle().overlaps(barrel.getPosition()))
+				{
 					if(player.getAdvancedCollisionRectangle().x + player.getAdvancedCollisionRectangle().getHeight()/2 >= barrel.getPosition().x &&  player.getAdvancedCollisionRectangle().y + player.getAdvancedCollisionRectangle().getWidth()/2 >= barrel.getPosition().y)
 					{
+						if(!player.moveRight)
+						{
+							player.moveRight(velocityItem);
+
+						}else
+						{
+							player.moveRight(velocityItem - (Constants.VELOCITY_PLAYER - velocityItem));
+							//player.moveLeft(velocityItem-(Constants.VELOCITY_PLAYER - velocityItem));
+						}
+						
 						isCollide = true;
 						if(!Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN) && !Gdx.input.isKeyPressed(Keys.LEFT)&& !Gdx.input.isKeyPressed(Keys.RIGHT))
 						{
-							if(!isFloating){
-								//player.setPosition(barrel.getPosition().x, barrel.getPosition().y);
-								player.moveRight(velocityItem);
-								isFloating = true;
-								//return false;
+							if(!player.isFloating){
+								player.isFloating = true;
 							}
 						}				
-						if(barrel.getStateTime() % 3 >= 2.7){
+						if(isBarrelFullInWatter(barrel) && barrel.getTrap()){
 							return true;
 						}
 					}
-					}
 				}
-			}
-			
+			}	
 			if(!isCollide)
 			{
-				System.out.println("NO COLIDE");
 				return true;
 			}
 		}
 		return false;
-	}
-	
-	private void testCollisionIntersection(Entity player, Entity obstacle){
-		Rectangle intersection = new Rectangle();
-		Intersector.intersectRectangles(player.getPosition(), obstacle.getPosition(), intersection); 
-		
-		if(intersection.x > player.getPosition().x)                                  
-			System.out.println("Intersects with right side");
-		if(intersection.y > player.getPosition().y)                                  
-			System.out.println("Intersects with top side");
-		if(intersection.x + intersection.width < player.getPosition().x + player.getPosition().width)  
-			System.out.println("Intersects with left side ");
-		if(intersection.y + intersection.height < player.getPosition().y + player.getPosition().height){
-			System.out.println("Intersects with bottom side");
-		}
 	}
 	
 	public boolean isAtHome(Player player){
@@ -660,12 +652,27 @@ public class LevelFrogger
 		{
 			for (Entity flag : flagsList) 
 			{
-				if(player.getPosition().overlaps(flag.getPosition())){
+				for (Entity winPlayer: winPlayerList)
+				{
+					if(player.getPosition().overlaps(winPlayer.getPosition())){
+						System.out.println("COLLIDE FLY");
+						this.applyCollisionEffectToPlayer(player);
+						return false;
+					}
+				}
+				
+				if(player.getPosition().overlaps(flag.getPosition()) && !player.getPosition().overlaps(fly.getPosition()))
+				{
 					float tmp =  player.getPosition().x;
 					float tmp2 = player.getPosition().y;
 					this.applyCollisionEffectToPlayer(player);
 					this.createWinPlayer(tmp, tmp2);
 					return true;
+				}else if (player.getPosition().overlaps(flag.getPosition()) && player.getPosition().overlaps(fly.getPosition()))
+				{
+					System.out.println("COLLIDE FLY");
+					this.applyCollisionEffectToPlayer(player);
+					return false;
 				}
 			}
 			return false;
