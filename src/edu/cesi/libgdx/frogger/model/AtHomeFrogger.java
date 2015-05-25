@@ -24,7 +24,8 @@ public class AtHomeFrogger extends Entity
         this.mouvement = new Motionless();
 	}
 	
-	private void loadAnimation(){
+	private void loadAnimation()
+	{
 		winplayerAnimation = new Animation(0.1f,imageManager.getWinPlayerTextureRegion());
 	}
 

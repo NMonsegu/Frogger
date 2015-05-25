@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import edu.cesi.libgdx.frogger.data.MapManager;
+import edu.cesi.libgdx.frogger.resources.MapManager;
 import edu.cesi.libgdx.frogger.utils.UIManager;
 import edu.cesi.libgdx.frogger.utils.enums.GameStates;
 
@@ -98,6 +98,9 @@ public class FroggerWorldRenderer
 		return viewport;
 	}
 	
+	/**
+	 * Convert byte to Ko Mo Go ...
+	 * */
     private String getFormattedSize(long size) 
     {
         String[] suffixes = new String[] { "octets", "Ko", "Mo", "Go", "To" };
@@ -109,7 +112,7 @@ public class FroggerWorldRenderer
             tmpSize /= 1024.0;
             i++;
         }
-        // arrondi à 10^-2
+        // round 10^-2
         tmpSize *= 100;
         tmpSize = (int) (tmpSize + 0.5);
         tmpSize /= 100;
@@ -123,19 +126,26 @@ public class FroggerWorldRenderer
 	 * */
 	public void renderWorld(float stateTime)
 	{	
+		//Background color
 	    Gdx.gl.glClearColor(0, 0, 0, 1);
+	    //Clear screen
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+	    //Update camera
 	    this.camera.update();
 		this.mapRenderer.setView(camera);
-
+		//Render map
 		this.mapRenderer.render();
+		//Update label score
 	    this.labelScore.setText("Score : " + world.getScore());
 	    
+	    //Start to draw
 		this.batch.begin();
+			//Draw score
 		    labelScore.draw(batch, stateTime);
+		    //Draw debug
 		    this.font.draw(batch, Integer.toString(Gdx.graphics.getFramesPerSecond()), 600, 680);
 		    this.font.draw(batch, getFormattedSize(Gdx.app.getJavaHeap()), 600, 150);
-		    
+		    //Draw camera
 		    this.batch.setProjectionMatrix(camera.combined);
 		    
 		    if(this.world.getGameState() != GameStates.PAUSE)
@@ -143,19 +153,23 @@ public class FroggerWorldRenderer
 				this.level.updateElements(stateTime, this.batch);
 		    }
 		    this.world.getPlayer().drawAnimation(this.batch);
-
+		    
+		    //Draw label timer
 	        this.progress = world.getTimer();
 	        timerBar.draw(batch, "Timer : " + progress , 800, 80);       
 		this.batch.end(); 
 		
-		world.getPlayer().updateAdvancedCollisionRectangle();
+		//Check collision maybe move to worlds
 		
+		
+		//Draw filled rectangle
 		shapeRenderer.begin(ShapeType.Filled);	
 	        shapeRenderer.setProjectionMatrix(camera.combined);
 	        shapeRenderer.setColor(Color.YELLOW);
 	        shapeRenderer.rect(800, 35, world.getTimer(), 20);
         shapeRenderer.end();
-    
+        
+		//Draw empty rectangle
 		shapeRenderer.begin(ShapeType.Line);	
 	        shapeRenderer.setProjectionMatrix(camera.combined);
 	        shapeRenderer.setColor(Color.YELLOW);
@@ -167,6 +181,9 @@ public class FroggerWorldRenderer
 	    shapeRenderer.end();
 	}
 	
+	/**
+	 * Release resources
+	 * */
 	public void dispose()
 	{
 	    batch.dispose();

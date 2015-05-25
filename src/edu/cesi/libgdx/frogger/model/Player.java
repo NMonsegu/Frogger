@@ -11,11 +11,15 @@ import edu.cesi.libgdx.frogger.utils.Constants;
 
 public class Player extends Entity
 {
+	
+	   
 	private final int STAY = 0;
 	private final int UP = 1;
 	private final int DOWN = 2;
 	private final int LEFT = 3;
 	private final int RIGHT = 4;
+	
+ 
 	
 	public boolean isFloating = false;
 	public boolean isMouving = false;
@@ -34,7 +38,7 @@ public class Player extends Entity
     private Animation leftAnimation;
     private Animation leftStayAnimation;
     
-    private int life = Constants.DEFAULT_LIFE;
+
     
     private boolean isCollide = false;
     private boolean isDead = false;
@@ -60,6 +64,8 @@ public class Player extends Entity
         currentAnimation = walkAnimation;
         this.mouvement = new UserMovements();
         mouvement_float = new UserMovements();
+        
+        life = Constants.DEFAULT_LIFE;
 	}
     
 	public Rectangle getAdvancedCollisionRectangle()
@@ -246,15 +252,7 @@ public class Player extends Entity
 		}
 	}
 
-	public int getLife() 
-	{
-		return life;
-	}
-	
-	public void setLife(int life)
-	{
-		this.life = life;
-	}
+
 
 	public boolean die()
 	{

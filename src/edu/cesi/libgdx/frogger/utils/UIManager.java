@@ -25,17 +25,26 @@ public class UIManager
 	
 	private void loadFontGenerators()
 	{
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/immortal.ttf"));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 40;
-		this.bigTitleFont = generator.generateFont(parameter);
-		generator.dispose();
-		
-		FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Remachine.ttf"));
-		FreeTypeFontParameter parameter2 = new FreeTypeFontParameter();
-		parameter2.size = 40;
-		this.labelsFont = generator2.generateFont(parameter2);
-		generator2.dispose();
+		try
+		{
+			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/immortal.ttf"));
+			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+			parameter.size = 40;
+			this.bigTitleFont = generator.generateFont(parameter);
+			generator.dispose();
+			
+			FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Remachine.ttf"));
+			FreeTypeFontParameter parameter2 = new FreeTypeFontParameter();
+			parameter2.size = 40;
+			this.labelsFont = generator2.generateFont(parameter2);
+			generator2.dispose();
+		}catch(NullPointerException ex)
+		{
+			System.err.println(ex + "Error loading custom font");
+		}catch(Exception ex)
+		{
+			System.err.println(ex + "Error loading custom font");
+		}
 	}
 	
 	public void useCustomSkin()
@@ -62,12 +71,12 @@ public class UIManager
 	public Label createLabelTitle( String text)
 	{
 		Label label = new Label(text, this.skin, "newtitle"); 
+		label.setVisible(true);
 		return label;
 	}
 	
-	public Label createLabel(int positionX, int positionY, String text){
+	public Label createLabel(String text){
 		Label label = new Label(text, this.skin); 
-		label.setPosition(Gdx.graphics.getWidth()/2-label.getWidth()/2, Gdx.graphics.getHeight() -150);
 		label.setVisible(true);
 		return label;
 	}

@@ -6,7 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 
-import edu.cesi.libgdx.frogger.data.RessourceManagerMenu;
+import edu.cesi.libgdx.frogger.resources.RessourceManagerMenu;
 
 	public class MenuScreen implements Screen
 	{
@@ -15,9 +15,8 @@ import edu.cesi.libgdx.frogger.data.RessourceManagerMenu;
 		private InputMultiplexer inputMultiplexer;
 	    private MenuStage menuStage;
 	    
-	    
-	    public MenuScreen(){
-			
+	    public MenuScreen()
+	    {
 	        rm = new RessourceManagerMenu();
 	        rm.initPlatformerResources();
 
@@ -25,7 +24,6 @@ import edu.cesi.libgdx.frogger.data.RessourceManagerMenu;
 	        menuStage = new MenuStage(rm);
 	        inputMultiplexer.addProcessor(menuStage);
 	        Gdx.input.setInputProcessor(inputMultiplexer);
-	        
 		}
 		
 		@Override
@@ -34,7 +32,8 @@ import edu.cesi.libgdx.frogger.data.RessourceManagerMenu;
 		}
 
 		@Override
-		public void render(float delta) {
+		public void render(float delta)
+		{
 			Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	        menuStage.act();

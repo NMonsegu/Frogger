@@ -1,8 +1,9 @@
-package edu.cesi.libgdx.frogger.data;
+package edu.cesi.libgdx.frogger.resources;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 public class AudioManager 
 {
@@ -20,7 +21,6 @@ public class AudioManager
 	private Sound win;
 	private Sound gameOver;
 	
-	
 	private AudioManager()
 	{
 	}
@@ -37,12 +37,18 @@ public class AudioManager
 	
     public void loadSound() 
     {  
-        this.hit      = loadSound("audio/hit.wav");  
-        this.click    = loadSound("audio/click.wav");
-    	this.timerEnd = loadSound("audio/timerend.wav");  
-    	this.timeout = loadSound("audio/timeout.wav");  
-    	this.win = loadSound("audio/win.wav");
-    	this.gameOver = loadSound("audio/gameover.wav");  
+    	try{
+            this.hit      = loadSound("audio/hit.wav");  
+            this.click    = loadSound("audio/click.wav");
+        	this.timerEnd = loadSound("audio/timerend.wav");  
+        	this.timeout = loadSound("audio/timeout.wav");  
+        	this.win = loadSound("audio/win.wav");
+        	this.gameOver = loadSound("audio/gameover.wav"); 
+    	}
+	   catch(GdxRuntimeException ex)
+    	{
+		 System.err.println(ex + " -> Sound missing");  
+	    }
     }  
     
     public Sound getTimerEnd() {
@@ -63,9 +69,8 @@ public class AudioManager
 
 	public void loadMusic()
     {
-	    this.ambianceMusic =  loadMusic("audio/music.mp3");
-	    this.move    = loadMusic("audio/move.wav");
-	     
+		    this.ambianceMusic =  loadMusic("audio/music.mp3");
+		    this.move    = loadMusic("audio/move.wav");
     }
     
     /**
@@ -111,13 +116,28 @@ public class AudioManager
 	 * */
     private Music loadMusic(String filename)
     {
-
+    	try
+    	{
     		return Gdx.audio.newMusic(Gdx.files.internal(filename)); 
+    	}
+ 	   catch(GdxRuntimeException ex)
+ 		{
+ 		 System.err.println(ex + " -> Music missing"); 
+ 		 return null;
+ 	    }
     }
     /***/
     private Sound loadSound (String filename) 
     { 
+    	try
+    	{
     		return Gdx.audio.newSound(Gdx.files.internal(filename));  
+    	}
+	   catch(GdxRuntimeException ex)
+		{
+		 System.err.println(ex + " -> Sound missing"); 
+		 return null;
+	    }
     }
 
 	public Sound getHit()

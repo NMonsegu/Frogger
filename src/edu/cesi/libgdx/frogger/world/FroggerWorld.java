@@ -67,21 +67,6 @@ public class FroggerWorld
         
         this.playMusic();
 	}
-	
-	public int getScore()
-	{
-		return this.score.getScore();
-	}
-	
-	public long getTimer()
-	{
-		return this.timer.getTimer();
-	}
-
-	public FroggerScreen getFroggerScreen()
-	{
-		return froggerScreen;
-	}
 
 	/**
 	 * Update the world depending on the current game stage (Paused/InGame)
@@ -130,11 +115,16 @@ public class FroggerWorld
 		}
 	}
 	
-	long tmpTimer;
-	boolean playTimer = false;
+	private long tmpTimer;
+	private boolean playTimer = false;
+	
 	/**Update the non graphic game logic*/
 	private void updateInGame()
 	{
+		//Set collision rectangle to player
+		player.updateAdvancedCollisionRectangle();
+		
+		//Play sound if player is moving and sound enable
         if(player.isMouving)
         {
     		if(soundState)
@@ -145,8 +135,10 @@ public class FroggerWorld
         {
         	mainGame.audioManager.stopMusic(mainGame.audioManager.getMove());
         }
-		
+		//Update player
 		player.update();
+		
+		//Update timer
 		this.timer.updateTimers();
 		tmpTimer = this.timer.getTimer();
 		
@@ -158,6 +150,7 @@ public class FroggerWorld
 		}
 		int tier = level.getPlayerTier(player);
 		
+		//Collision management
 		if(tier == 0 || tier == 2)
 		{
 			player.move(difficultyManager.getVelocityPlayer());
@@ -165,7 +158,7 @@ public class FroggerWorld
 	        if(is)
 	        {
 	        	this.playHit();
-	        	level.applyCollisionEffectToPlayer(player);
+	        	level.applyCollisionEffect(player);
 	        }
 		}else if(tier ==1)
 		{
@@ -175,18 +168,21 @@ public class FroggerWorld
 	        if(isColideSecondTier)
 	        {
 	        	this.playHit();
-	        	level.applyCollisionEffectToPlayer(player);
+	        	level.applyCollisionEffect(player);
 	        }
 		}
 		
+		//Increase score
         score.increaseScore(player.getPosition().x, player.getPosition().y);
         
+        //Check if player is at home
         if(level.isAtHome(player))
         {
         	score.setScore(score.getScore() + 50);//Bonus
         	score.setLastMaxPosition(new Vector2(50,50));
         }
         
+        //Check if timer == 0
 		if(tmpTimer <= 0)
 		{
 			this.gamestate = GameStates.GAMEOVER;
@@ -195,7 +191,7 @@ public class FroggerWorld
 			.setScreen(new EndLevelScreen(gamestate,score));
         	return;
 		} 
-        
+        //Check if player is dead
         if(player.die())
         {	
         	level.resetLevel();
@@ -206,7 +202,7 @@ public class FroggerWorld
 			.setScreen(new EndLevelScreen(gamestate,score));
         	return;
         }
-        
+        //Check if player has win
         if(level.isGameFinish(player))
         {
         	this.gamestate = GameStates.WIN;
@@ -223,24 +219,9 @@ public class FroggerWorld
 		mainGame.audioManager.stopMusic(mainGame.audioManager.getAmbianceMusic());
 		mainGame.audioManager.stopMusic(mainGame.audioManager.getMove());
 	}
-	
-	public PauseStage getPauseStage() 
-	{
-		return pauseStage;
-	}
-
-	public LevelFrogger getLevel() 
-	{
-		return level;
-	}
-
-	public DifficultyManager getDifficultyManager() 
-	{
-		return difficultyManager;
-	}
 
 	/**
-	 * play ambiance music
+	 * play ambiance music if sound is enable
 	 * */
 	private void playMusic()
 	{
@@ -251,9 +232,8 @@ public class FroggerWorld
 	}
 	
 	/**
-	 * Play hit song
+	 * Play hit song if sound is enable
 	 * */
-	
 	private void playHit()
 	{
 		if(soundState)
@@ -262,6 +242,9 @@ public class FroggerWorld
 		}
 	}
 	
+	/**
+	 * Play gameover song if sound is enable
+	 * */
 	private void playGameOver(){
 		if(soundState)
 		{
@@ -269,6 +252,9 @@ public class FroggerWorld
 		}
 	}
 	
+	/**
+	 * Play timer song if sound is enable
+	 * */
 	private void playTimeout(){
 		if(soundState)
 		{
@@ -276,6 +262,9 @@ public class FroggerWorld
 		}
 	}
 	
+	/**
+	 * Play end timer song if sound is enable
+	 * */
 	private void playTimerEnd(){
 		if(soundState)
 		{
@@ -283,6 +272,9 @@ public class FroggerWorld
 		}
 	}
 	
+	/**
+	 * Play win song if sound is enable
+	 * */
 	private void playWin(){
 		if(soundState)
 		{
@@ -301,6 +293,13 @@ public class FroggerWorld
     	player.setPosition(50, 50);
     	this.gamestate = GameStates.INGAME;
 	}
+
+	public void dispose(){
+		pauseStage.dispose();
+		System.out.println("froggerWorld dispose");
+	}
+	
+	//******************************************** Get - Set *********************************************//
 	
 	public Player getPlayer() {
 		return player;
@@ -309,9 +308,34 @@ public class FroggerWorld
 	public GameStates getGameState(){
 		return this.gamestate;
 	}
+	
+	public int getScore()
+	{
+		return this.score.getScore();
+	}
+	
+	public long getTimer()
+	{
+		return this.timer.getTimer();
+	}
 
-	public void dispose(){
-		pauseStage.dispose();
-		System.out.println("froggerWorld dispose");
+	public FroggerScreen getFroggerScreen()
+	{
+		return froggerScreen;
+	}
+	
+	public PauseStage getPauseStage() 
+	{
+		return pauseStage;
+	}
+
+	public LevelFrogger getLevel() 
+	{
+		return level;
+	}
+
+	public DifficultyManager getDifficultyManager() 
+	{
+		return difficultyManager;
 	}
 }

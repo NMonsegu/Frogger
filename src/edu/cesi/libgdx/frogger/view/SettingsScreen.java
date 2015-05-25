@@ -5,28 +5,22 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import edu.cesi.libgdx.frogger.data.SettingsManager;
+import edu.cesi.libgdx.frogger.resources.SettingsManager;
+import edu.cesi.libgdx.frogger.utils.UIManager;
 import edu.cesi.libgdx.frogger.view.menu.MenuScreen;
 
 public class SettingsScreen implements Screen
 {
-
-	private Skin skin;
 	private Label titre;
 	private Label difficulty;
 	private Label sound;
@@ -47,6 +41,8 @@ public class SettingsScreen implements Screen
 	
 	private SettingsManager settingsManager;
 	
+	private UIManager uiManager;
+	
 	public SettingsScreen(){
 		this.batch = new SpriteBatch();
 		
@@ -58,78 +54,47 @@ public class SettingsScreen implements Screen
 	      
 		this.camera.position.set(camera.viewportWidth/2,camera.viewportHeight/2,0);
 		this.camera.update();
-		createElements();
+		loadUI();
 
-}
+	}
 	
-	private void createElements(){
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/immortal.ttf"));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 40;
-		BitmapFont grosTitres = generator.generateFont(parameter);
-		generator.dispose();
-		
-		FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Remachine.ttf"));
-		FreeTypeFontParameter parameter2 = new FreeTypeFontParameter();
-		parameter2.size = 40;
-		BitmapFont label = generator2.generateFont(parameter2);
-		generator2.dispose();
-		
+	private void loadUI(){
+		this.background = new Texture(Gdx.files.internal("settingsScreen/image.jpg")); 
 		this.stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 		
-		skin = new Skin();
-		skin.addRegions(new TextureAtlas(Gdx.files.internal("skins/custom.atlas")));
-		skin.add("bigTitle", grosTitres);
-		skin.add("label", label);
-		skin.load(Gdx.files.internal("skins/customskin.json"));
+		uiManager = new UIManager();
 		
-		this.background = new Texture(Gdx.files.internal("settingsScreen/image.jpg")); 
-		
-		
-		titre = new Label("Settings", skin, "newtitle");  //création d'un  label avec font «  titletext » et color red 
+		titre = uiManager.createLabelTitle("Settings");
 		titre.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() -100);
 		stage.addActor(titre);
-
 		
-		difficulty = new Label("1", skin); 
+		difficulty = uiManager.createLabel("1"); 
 		difficulty.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() -150);
-		difficulty.setVisible(true);
 		stage.addActor(difficulty);
 		
-		
-		sliderLevel = new Slider(0,2,1,false,skin); 
+		sliderLevel = uiManager.createSlider(0,2,1);
 		sliderLevel.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() -180);
-		sliderLevel.setVisible(true);
 		stage.addActor(sliderLevel);
 		
-		
-		sound = new Label("Sound : ON", skin); 
+		sound =   uiManager.createLabel("Sound : ON"); 
 		sound.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() -210);
-		sound.setVisible(true);
 		stage.addActor(sound);
 		
-		sliderSound = new Slider(0,1,1,false,skin); 
+		sliderSound = uiManager.createSlider(0,1,1);
 		sliderSound.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() -230);
-		sliderSound.setVisible(true);
 		stage.addActor(sliderSound);
 		
-		resolution = new Label("Resolution : Default", skin); 
+		resolution = uiManager.createLabel("Resolution : Default"); 
 		resolution.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() -260);
-		resolution.setVisible(true);
 		stage.addActor(resolution);
 		
-		sliderResolution = new Slider(0,2,1,false,skin); 
+		sliderResolution = uiManager.createSlider(0,2,1);
 		sliderResolution.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() -280);
-		sliderResolution.setVisible(true);
 		stage.addActor(sliderResolution);
 
-		buttonSave = new TextButton("Save", skin,"default");
-		buttonSave.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() - 350 );
-		buttonSave.pad(20);
-		buttonSave.pack();//sinon padding non pris en compte !!
-		buttonSave.setSize(120,50);
-		
+		buttonSave = uiManager.createButton("Save");
+		buttonSave.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() - 350 );		
 		buttonSave.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -141,13 +106,9 @@ public class SettingsScreen implements Screen
 		});
 		stage.addActor(buttonSave);
 		
-		buttonPrevious = new TextButton("Previous", skin,"default");
 		
-		buttonPrevious.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() - 400 );
-		buttonPrevious.pad(20);
-		buttonPrevious.pack();//sinon padding non pris en compte !!
-		buttonPrevious.setSize(120,50);
-		
+		buttonPrevious = uiManager.createButton("Previous");		
+		buttonPrevious.setPosition(Gdx.graphics.getWidth()/2-titre.getWidth()/2, Gdx.graphics.getHeight() - 400 );	
 		buttonPrevious.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -161,6 +122,7 @@ public class SettingsScreen implements Screen
 		getLabelResolution();
 		getLabelSound();
 	}
+	
 	
 	@Override
 	public void render(float delta) {
@@ -296,7 +258,6 @@ public class SettingsScreen implements Screen
 			
 		}
 		settingsManager.saveModifications();
-
 	}
 	
 	private void setResolution(){
@@ -321,7 +282,7 @@ public class SettingsScreen implements Screen
 			this.resize(1440, 900);
 		}
 		settingsManager.saveModifications();
-		this.createElements();
+		this.loadUI();
 	}
 	
 	private void setSound(){
@@ -367,7 +328,6 @@ public class SettingsScreen implements Screen
 		this.background.dispose();
 		this.batch.dispose();
 		this.stage.dispose();
-		this.skin.dispose();
 		System.out.println("Settings Screen dispose");
 		
 	}

@@ -1,12 +1,14 @@
 package edu.cesi.libgdx.frogger.controler;
 
+import java.lang.reflect.InvocationTargetException;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 
-import edu.cesi.libgdx.frogger.data.AudioManager;
-import edu.cesi.libgdx.frogger.data.ImagesManager;
-import edu.cesi.libgdx.frogger.data.SettingsManager;
+import edu.cesi.libgdx.frogger.resources.AudioManager;
+import edu.cesi.libgdx.frogger.resources.ImagesManager;
+import edu.cesi.libgdx.frogger.resources.SettingsManager;
 import edu.cesi.libgdx.frogger.view.menu.MenuScreen;
 
 public class MainGame extends Game {
@@ -39,24 +41,28 @@ public class MainGame extends Game {
 		this.imageManager.loadTextureAtlas();
 		this.imageManager.loadTextureRegion();
 		
-		try{
-			this.setScreen(new MenuScreen());
-		}catch(Exception e){
-			System.out.println(e);
-		}
-		
+		this.setScreen(new MenuScreen());
 	}
 	
 	@Override
 	public void setScreen (Screen screen) {
-		Screen tmp = this.screen;
-		if (this.screen != null) this.screen.hide();
-		this.screen = screen;
-		if (this.screen != null) {
-			this.screen.show();
-			this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		try 
+		{
+			Screen tmp = this.screen;
+			if (this.screen != null) this.screen.hide();
+			this.screen = screen;
+			if (this.screen != null) {
+				this.screen.show();
+				this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			}
+			tmp.dispose();
+			
+		}catch(NullPointerException  ex)
+		{
+			System.err.println(ex + " ->  setScreen");
+		}catch(Exception ex){
+			System.err.println(ex + "Exception setScreen");
 		}
-		tmp.dispose();
 	}
 
 	/** Called when the application is destroyed*/

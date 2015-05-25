@@ -1,4 +1,4 @@
-package edu.cesi.libgdx.frogger.data;
+package edu.cesi.libgdx.frogger.resources;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -16,7 +16,7 @@ public class MapManager
 	
 	public TiledMap getMap()
 	{
-/*		if(Gdx.graphics.getWidth() == 800 && Gdx.graphics.getHeight() == 480)
+		/*		if(Gdx.graphics.getWidth() == 800 && Gdx.graphics.getHeight() == 480)
 		{
 			this.map = new TmxMapLoader().load(Constants.TMX_TILED_MAP_800x480);
 		}
@@ -29,8 +29,18 @@ public class MapManager
 			this.map = new TmxMapLoader().load(Constants.TMX_TILED_MAP_1440x900);
 		}
 		//to remove
-*/		this.map = new TmxMapLoader().load(Constants.TMX_TILED_MAP_1200x800);
-		return this.map;
+ 		*/		
+		try{
+			this.map = new TmxMapLoader().load(Constants.TMX_TILED_MAP_1200x800);
+			return this.map;
+		}catch (NullPointerException ex)
+		{
+			System.err.println(ex + "No map found ");
+		}catch(Exception ex)
+		{
+			System.err.println(ex + "Error loading map ");
+		}
+		return null;
 	}
 	
 	

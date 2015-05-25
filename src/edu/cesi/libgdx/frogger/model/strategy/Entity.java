@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
-import edu.cesi.libgdx.frogger.data.ImagesManager;
+import edu.cesi.libgdx.frogger.resources.ImagesManager;
 
 public abstract class Entity {
     
@@ -13,10 +13,9 @@ public abstract class Entity {
 		protected Rectangle bounds;
 	    protected float stateTime;
 	    protected ImagesManager imageManager = ImagesManager.getInstance();
-	 
+	    
+	    protected int life;
 
-	    
-	    
 	    public Rectangle getBounds() {
 			return bounds;
 		}
@@ -73,6 +72,16 @@ public abstract class Entity {
 	    	this.bounds.x = x;
 	    	this.bounds.y = y;
 	    }
+	    
+		public int getLife() 
+		{
+			return life;
+		}
+		
+		public void setLife(int life)
+		{
+			this.life = life;
+		}
 	    
 	    public void setMovement(MovementBehavior newMovement){this.mouvement = newMovement;}
 	  

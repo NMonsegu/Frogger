@@ -1,4 +1,4 @@
-package edu.cesi.libgdx.frogger.view;
+package edu.cesi.libgdx.frogger.view.highScore;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import edu.cesi.libgdx.frogger.data.SettingsManager;
+import edu.cesi.libgdx.frogger.resources.SettingsManager;
 
 public class HighScoreScreen implements Screen
 {
@@ -43,31 +43,12 @@ public class HighScoreScreen implements Screen
 		this.camera.position.set(camera.viewportWidth/2,camera.viewportHeight/2,0);
 		this.camera.update();
 	
-		
 		settingsManager = SettingsManager.getInstance();
-		//settingsBackground1200x800
+
 		this.background = new Texture(Gdx.files.internal("settingsScreen/image.jpg"));
 		level = settingsManager.getLevel();
 		
 		this.stage = new ScoreStage(settingsManager.getHighScoreNew(level));
-		
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/immortal.ttf"));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 40;
-		BitmapFont grosTitres = generator.generateFont(parameter);
-		generator.dispose();
-		
-		FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Remachine.ttf"));
-		FreeTypeFontParameter parameter2 = new FreeTypeFontParameter();
-		parameter2.size = 40;
-		BitmapFont label = generator2.generateFont(parameter2);
-		generator2.dispose();
-		
-		skin = new Skin();
-		skin.addRegions(new TextureAtlas(Gdx.files.internal("skins/custom.atlas")));
-		skin.add("bigTitle", grosTitres);
-		skin.add("label", label);
-		skin.load(Gdx.files.internal("skins/customskin.json"));
 		
 		Gdx.input.setInputProcessor(stage);
 

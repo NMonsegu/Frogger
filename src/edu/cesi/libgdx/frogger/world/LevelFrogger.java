@@ -23,7 +23,7 @@ import edu.cesi.libgdx.frogger.utils.Constants;
 import edu.cesi.libgdx.frogger.utils.DifficultyManager;
 import edu.cesi.libgdx.frogger.utils.ItemPositionManager;
 
-public class LevelFrogger 
+public class LevelFrogger implements Level
 {
 	/**
 	 * This class manage the models behaviors. It create all then update them.
@@ -43,19 +43,6 @@ public class LevelFrogger
 	
 	private Entity fly ;
 	
-	private ItemPositionManager ipm;
-	
-	private DifficultyManager difficutyManager;
-	
-	private int numberOfFireBalls;
-	private int numberOfShurikens;
-	private int numberOfBarrels;
-	
-	private int velocityItem;
-	//private int velocityItem2;
-	
-	//private int velocityPlayer;
-	
 	private Vector2[] fireballPosition;
 	private Vector2[] shurikenPosition;
 	private Vector2[] barrelPosition;
@@ -66,7 +53,17 @@ public class LevelFrogger
 	private Vector2[] heartsPosition;
 	private Vector2[] flagsPosition;
 	
-	public LevelFrogger(DifficultyManager difficutyManager){
+	private ItemPositionManager ipm;
+	private DifficultyManager difficutyManager;
+	
+	private int numberOfFireBalls;
+	private int numberOfShurikens;
+	private int numberOfBarrels;
+	
+	private int velocityItem;
+	
+	public LevelFrogger(DifficultyManager difficutyManager)
+	{
 		this.difficutyManager = difficutyManager;
 		ipm = new ItemPositionManager();
 		
@@ -85,10 +82,11 @@ public class LevelFrogger
 		numberOfBarrels   = this.difficutyManager.getNumberOfBarrelToDraw();
 		velocityItem      = this.difficutyManager.getVelocityItem();
 		//velocityItem2 = Constants.VELOCITY_ITEM_EASY_2;
-		
-		//velocityPlayer    = this.difficutyManager.getVelocityPlayer();
 	}
 
+	//************************************************* Create elements ****************************************************//
+
+	@Override
 	public void createElements()
 	{
 		this.createFlags();
@@ -104,101 +102,7 @@ public class LevelFrogger
 		this.createFly();
 	}
 	
-	public void resetLevel()
-	{
-		this.createHeart();
-		this.winPlayerList = new ArrayList<Entity>();
-	}
-	
-	/**
-	 * Update the game elements
-	 * 
-	 * @param stateTime : current delta time
-	 * @param batch : {@link FroggerWorldRenderer} SpriteBatch
-	 * */
-	public void updateElements(float stateTime, SpriteBatch batch)
-	{
-		this.updateFireBalls(stateTime,batch);
-		this.updateShurikens(stateTime,batch);
-		this.updateFlag(stateTime,batch);
-		this.updateBarrels(stateTime,batch);
-		this.updateWinPlayer(stateTime,batch);
-		this.updateHeart(stateTime,batch);
-		this.updateFly(stateTime,batch);
-		
-		this.updateBigBush( stateTime, batch);
-		this.updateMediumBush(stateTime, batch);
-		this.updateSmallBush( stateTime, batch);
-	}
-	
-	public int getPlayerTier(Player player)
-	{
-		if(player.getPosition().y < Constants.TIER_2_Y)
-		{
-			return 0;
-		}
-		else if(player.getPosition().y > Constants.TIER_2_Y && player.getPosition().y < Constants.TIER_3_Y)
-		{
-			return 1;
-		}else 
-		{
-			return 2;
-		}
-	}
-	
-	public boolean isCollide(Player player)
-	{
-		if(player.getPosition().y < Constants.TIER_2_Y)
-		{
-			if(this.isCollideFistTier(player)) return true;
-			
-		}
-		else if(player.getPosition().y > Constants.TIER_2_Y && player.getPosition().y < Constants.TIER_3_Y)
-		{
-			//if(this.isCollideSecondTier(player)) return true;
-		}
-			
-		return false;
-	}
-	
-	/**Check it the player is dead or has win
-	 * @return boolean
-	 * */
-	public boolean isGameFinish(Player player){
-		if(player.getLife() == 0 || winPlayerList.size() == Constants.NUMBER_OF_FLAG)
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	/*Create elements*/
-	
-	/* Elements creation */
-	
-	private int getRandomInt(int min, int max){
-		java.util.Random rand = new java.util.Random();
-	    int randomNum = rand.nextInt((max - min) + 1) + min;
-	    return randomNum;
-	}
-	
-	private long tmp =System.currentTimeMillis()/1000;
-	private long timeRef = tmp;
-	
-	private void setRandomPositionFly()
-	{
-		int position = getRandomInt(0,Constants.NUMBER_OF_FLAG -1);
-		fly.setPosition(flagsPosition[position].x, flagsPosition[position].y);
-	}
-	
-	
-	/*Create elements*/
-	
 	/*Static elements*/
-	private void createFly(){
-		fly = new Fly();
-		this.setRandomPositionFly();
-	}
 	
 	private void createHeart(){
 		for (int i = 0; i < Constants.DEFAULT_LIFE; i++){
@@ -261,49 +165,146 @@ public class LevelFrogger
 		}
 	}
 	
+	private void createBarrels(){	
+		for (int i = 0; i < numberOfBarrels; i++)
+		{
+			Barrel tmp = new Barrel();
+			tmp.setPosition(barrelPosition[i].x,barrelPosition[i].y);
+			barrelsList.add(tmp);
+		}
+		createTrappedBarrels();
+	}
+	
+	/**Create the player at home*/
 	private void createWinPlayer(float x, float y)
 	{
 		Entity winplayer = new AtHomeFrogger();
 		winplayer.setPosition(x,y);
 		winPlayerList.add(winplayer);
 	}
-	/* Update elements */
 	
-	private void updateFireBalls(float stateTime, SpriteBatch batch)
+	private void createFly(){
+		fly = new Fly();
+		this.setRandomPositionFly();
+	}
+	//************************************************* Update elements *************************************************//
+	@Override
+	public void updateElements(float stateTime, SpriteBatch batch)
 	{
-		for (Entity fireBall : fireBallsList) 
+		this.updateItems(stateTime,batch, fireBallsList);
+		this.updateItems(stateTime,batch, shurikensList);
+		this.updateItems(stateTime,batch, flagsList);
+		this.updateItems(stateTime,batch, winPlayerList);
+		this.updateItems(stateTime,batch, heartList);
+		
+		this.updateItems(stateTime,batch, bigBushList);
+		this.updateItems(stateTime,batch, mediumBushList);
+		this.updateItems(stateTime,batch, smallBushList);
+		
+		this.updateFly(stateTime,batch);
+		this.updateBarrels(stateTime,batch);
+	}
+	
+	/**Generic method to update elements
+	 * @param stateTime current state time
+	 * @param SpriteBatch OpenGL drawer
+	 * @param ArrayList<Entity> entities to update
+	 * */
+	private void updateItems(float stateTime, SpriteBatch batch, ArrayList<Entity> entities)
+	{
+		for (Entity item : entities) 
 		{
-			fireBall.setStateTime(stateTime);
-			fireBall.drawAnimation(batch);
-			fireBall.move(velocityItem);
+			item.setStateTime(stateTime);
+			item.drawAnimation(batch);
+			item.move(velocityItem);
+		}
+	}
+	/**
+	 * Update the fly and check if the position need to be updated. If true it set fly to the new random position
+	 * @param stateTime current state time
+	 * @param SpriteBatch OpenGL drawer
+	 * */
+	private void updateFly(float stateTime, SpriteBatch batch){
+		long time =  System.currentTimeMillis()/1000;
+		
+		fly.setStateTime(stateTime);
+		fly.drawAnimation(batch);
+		fly.move(0);
+		
+		if(time >= this.timeRef +3)
+		{
+			this.timeRef = time;
+			setRandomPositionFly();
+    		fly.setStateTime(stateTime);
+    		fly.drawAnimation(batch);
+    		fly.move(0);
 		}
 	}
 	
-	private void updateShurikens(float stateTime, SpriteBatch batch)
+	//************************************************* Fly management *************************************************//
+	
+	private long tmp =System.currentTimeMillis()/1000;
+	private long timeRef = tmp;
+	
+	/**
+	 * Get a random position and set position to fly
+	 * */
+	private void setRandomPositionFly()
 	{
-		for (Entity shuriken : shurikensList) 
+		int position = getRandomInt(0,Constants.NUMBER_OF_FLAG -1);
+		fly.setPosition(flagsPosition[position].x, flagsPosition[position].y);
+	}
+	
+	//************************************************* barrels management *************************************************//
+
+	private boolean barrelTrapisInitialized = true;
+	/**
+	 * Update the barrels and check if we need to reset traps
+	 * */
+	private void updateBarrels(float stateTime, SpriteBatch batch)
+	{
+		for (Barrel barrel : barrelsList) 
+		{	
+			if(!barrel.getTrap())
+			{
+				barrel.setStateTime(0.3f);
+			}else
+			{
+				barrel.setStateTime(stateTime);
+			}
+			barrel.drawAnimation(batch);
+			barrel.move(velocityItem);
+		}
+		
+		if(mustResetBarrelTrap())
 		{
-			shuriken.setStateTime(stateTime);
-			shuriken.drawAnimation(batch);
-			shuriken.move(velocityItem);
+			if(!barrelTrapisInitialized)
+			{
+				createTrappedBarrels();
+				barrelTrapisInitialized = true;
+				System.out.println("must");
+				try {
+					Thread.sleep(60);
+				} catch (InterruptedException e) {
+					
+					e.printStackTrace();
+				}
+			}
+		}else
+		{
+			barrelTrapisInitialized = false;
 		}
 	}
 	
-	private void updateFlag(float stateTime, SpriteBatch batch)
-	{
-		for (Entity flag : flagsList) 
-		{
-			flag.setStateTime(stateTime);
-			flag.drawAnimation(batch);
-			flag.move(velocityItem);
-		}
-	}
+	private int trap1 = 0;
+	private int trap2 = 0;
+	private int trap3 = 0;
+	private int trap4 = 0;
+
 	
-	int trap1 = 0;
-	int trap2 = 0;
-	int trap3 = 0;
-	int trap4 = 0;
-	
+	/**
+	 * Create 4 trapped barrels
+	 * */
 	private void createTrappedBarrels()
 	{
 		trap1 = getRandomInt(0,numberOfBarrels);
@@ -326,52 +327,11 @@ public class LevelFrogger
 		}
 	}
 	
-	private void createBarrels(){	
-		for (int i = 0; i < numberOfBarrels; i++)
-		{
-			Barrel tmp = new Barrel();
-			tmp.setPosition(barrelPosition[i].x,barrelPosition[i].y);
-			barrelsList.add(tmp);
-		}
-		createTrappedBarrels();
-	}
-	
-	boolean test = true;
-	private void updateBarrels(float stateTime, SpriteBatch batch)
-	{
-		for (Barrel barrel : barrelsList) 
-		{	
-			if(!barrel.getTrap())
-			{
-				barrel.setStateTime(0.3f);
-			}else
-			{
-				barrel.setStateTime(stateTime);
-			}
-			barrel.drawAnimation(batch);
-			barrel.move(velocityItem);
-		}
-		
-		if(mustResetBarrelTrap())
-		{
-			if(!test)
-			{
-				createTrappedBarrels();
-				test = true;
-				System.out.println("must");
-				try {
-					Thread.sleep(60);
-				} catch (InterruptedException e) {
-					
-					e.printStackTrace();
-				}
-			}
-		}else
-		{
-			test = false;
-		}
-	}
-	
+	/**
+	 * Check the current barrel KeyFrameIndex 
+	 * @param barrel
+	 * @return true if the barrel is under water 
+	 * */
 	private boolean isBarrelFullInWatter(Barrel barrel)
 	{	
 		if(barrel.getCurrentAnimation().getKeyFrameIndex(barrel.getStateTime()%3)== 4){
@@ -382,6 +342,9 @@ public class LevelFrogger
 		return false;
 	}
 	
+	/**
+	 * Check if the current trapped barrel has finished his animation
+	 * */
 	private boolean mustResetBarrelTrap(){
 		//2.9942987f 
 		for (Entity barrel : barrelsList)
@@ -393,87 +356,21 @@ public class LevelFrogger
 		}
 		return false;
 	}
-	
-	private void updateBigBush(float stateTime, SpriteBatch batch)
-	{
-		for (Entity bush : bigBushList) 
-		{
-			bush.setStateTime(stateTime);
-			bush.drawAnimation(batch);
-			bush.move(velocityItem);
-		}
-	}
-	
-	private void updateMediumBush(float stateTime, SpriteBatch batch)
-	{
-		for (Entity bush : mediumBushList) 
-		{
-			bush.setStateTime(stateTime);
-			bush.drawAnimation(batch);
-			bush.move(velocityItem);
-		}
-	}
-	
-	private void updateSmallBush(float stateTime, SpriteBatch batch)
-	{
-		for (Entity bush : smallBushList) 
-		{
-			bush.setStateTime(stateTime);
-			bush.drawAnimation(batch);
-			bush.move(velocityItem);
-		}
-	}
-	
-	private void updateHeart(float stateTime, SpriteBatch batch){
-		for (Entity heart : heartList) 
-		{
-			heart.setStateTime(stateTime);
-			heart.drawAnimation(batch);
-			heart.move(velocityItem);
-		}
-	}
 
-	private void updateWinPlayer(float stateTime, SpriteBatch batch)
-	{
-		try{
-			for (Entity winplayer : winPlayerList) 
-			{
-				winplayer.setStateTime(stateTime);
-				winplayer.drawAnimation(batch);
-				winplayer.move(0);
-			}
-		}catch (Exception e){
-			System.out.println(e);
-		}
-	}
+	//************************************************* Collisions *************************************************//
 	
-	//TODO CHANGE IT TO LIBGDX INTERNAL CURRENT TIME ( CROSS PLATEFORMS ) 
-	private void updateFly(float stateTime, SpriteBatch batch){
-		long time =  System.currentTimeMillis()/1000;
-		
-		fly.setStateTime(stateTime);
-		fly.drawAnimation(batch);
-		fly.move(0);
-		
-		if(time >= this.timeRef +3)
-		{
-			this.timeRef = time;
-			setRandomPositionFly();
-    		fly.setStateTime(stateTime);
-    		fly.drawAnimation(batch);
-    		fly.move(0);
-		}
-	}
-	
-	
-	
-	/*Collisions*/
-	public void applyCollisionEffectToPlayer(Player player){
+	/**
+	 * Remove a life to the entity and to default position
+	 * */
+	@Override
+	public void applyCollisionEffect(Entity player){
 		player.setLife(player.getLife()-1);
 		player.setPosition(50, 50);
 		heartList.remove(0);
 	}
-	
+	/**
+	 * Check if the player is in collide with something
+	 * */
 	public boolean isCollideFistTier(Player player)
 	{
 		if(player.getPosition().y < Constants.TIER_2_Y)
@@ -487,6 +384,9 @@ public class LevelFrogger
 		return false;
 	}
 	
+	/**
+	 * Simple collision detection
+	 * */
 	private boolean simpleCollision(Player player,ArrayList<Entity>  entityList ){
 		for (Entity entity : entityList) 
 		{
@@ -497,10 +397,11 @@ public class LevelFrogger
 	
 	public boolean isCollideSecondTier(Player player)
 	{
-		return testCollisionAdvancedRectangle(player);
+		return collisionAdvancedRectangle(player);
 	}
 	
-	private boolean testCollisionAdvancedRectangle(Player player)
+	/** Collision detection for second tier */
+	private boolean collisionAdvancedRectangle(Player player)
 	{
 		if(player.getPosition().y > Constants.TIER_2_Y && player.getPosition().y < Constants.TIER_3_Y)
 		{
@@ -646,6 +547,7 @@ public class LevelFrogger
 		return false;
 	}
 	
+	/** Collision detection for last tier  */
 	public boolean isAtHome(Player player){
 		
 	 if(player.getPosition().y > Constants.TIER_3_Y)
@@ -656,7 +558,7 @@ public class LevelFrogger
 				{
 					if(player.getPosition().overlaps(winPlayer.getPosition())){
 						System.out.println("COLLIDE FLY");
-						this.applyCollisionEffectToPlayer(player);
+						this.applyCollisionEffect(player);
 						return false;
 					}
 				}
@@ -665,13 +567,13 @@ public class LevelFrogger
 				{
 					float tmp =  player.getPosition().x;
 					float tmp2 = player.getPosition().y;
-					this.applyCollisionEffectToPlayer(player);
+					this.applyCollisionEffect(player);
 					this.createWinPlayer(tmp, tmp2);
 					return true;
 				}else if (player.getPosition().overlaps(flag.getPosition()) && player.getPosition().overlaps(fly.getPosition()))
 				{
 					System.out.println("COLLIDE FLY");
-					this.applyCollisionEffectToPlayer(player);
+					this.applyCollisionEffect(player);
 					return false;
 				}
 			}
@@ -680,4 +582,54 @@ public class LevelFrogger
 		return false;
 	}
 	
+	//************************************************* Utils *************************************************//
+	
+	/**Reset life and winplayer*/
+	@Override
+	public void resetLevel()
+	{
+		this.createHeart();
+		this.winPlayerList = new ArrayList<Entity>();
+	}
+	/**Utils method to get a random int
+	 * @param min
+	 * @param max
+	 * */
+	private int getRandomInt(int min, int max){
+		java.util.Random rand = new java.util.Random();
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
+	    return randomNum;
+	}
+	
+	/**
+	 * Return the current tier 
+	 * @return 0 if tier 1 ; 1 if tier2 ; 2 if tier 3
+	 * 
+	 * */
+	public int getPlayerTier(Player player)
+	{
+		if(player.getPosition().y < Constants.TIER_2_Y)
+		{
+			return 0;
+		}
+		else if(player.getPosition().y > Constants.TIER_2_Y && player.getPosition().y < Constants.TIER_3_Y)
+		{
+			return 1;
+		}else 
+		{
+			return 2;
+		}
+	}
+
+	/**Check it the player is dead or has win
+	 * @return boolean
+	 * */
+	public boolean isGameFinish(Player player){
+		if(player.getLife() == 0 || winPlayerList.size() == Constants.NUMBER_OF_FLAG)
+		{
+			return true;
+		}
+		return false;
+	}
+
 }

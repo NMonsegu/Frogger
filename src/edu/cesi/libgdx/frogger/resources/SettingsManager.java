@@ -1,4 +1,4 @@
-package edu.cesi.libgdx.frogger.data;
+package edu.cesi.libgdx.frogger.resources;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;

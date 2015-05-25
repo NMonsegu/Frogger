@@ -2,23 +2,19 @@ package edu.cesi.libgdx.frogger.view.menu;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.uwsoft.editor.renderer.SceneLoader;
 
 import edu.cesi.libgdx.frogger.controler.MainGame;
-import edu.cesi.libgdx.frogger.data.RessourceManagerMenu;
-import edu.cesi.libgdx.frogger.view.HighScoreScreen;
+import edu.cesi.libgdx.frogger.resources.RessourceManagerMenu;
+import edu.cesi.libgdx.frogger.utils.UIManager;
 import edu.cesi.libgdx.frogger.view.SettingsScreen;
 import edu.cesi.libgdx.frogger.view.game.FroggerScreen;
+import edu.cesi.libgdx.frogger.view.highScore.HighScoreScreen;
 
 
 public class MenuStage extends Stage 
@@ -29,11 +25,11 @@ public class MenuStage extends Stage
 		this.dispose();
 	}
 	
-	Skin skin;
+	private TextButton buttonPlay;
+	private TextButton buttonSettings;
+	private TextButton buttonHighScore;
 	
-	TextButton buttonPlay;
-	TextButton buttonSettings;
-	TextButton buttonHighScore;
+	private UIManager uiManager;
 	
 	public MenuStage(RessourceManagerMenu rm) 
 	{
@@ -43,56 +39,32 @@ public class MenuStage extends Stage
         SceneLoader sl = new SceneLoader(rm);
         sl.setResolution(rm.currentResolution.name);
 
-        // loading UI scene
-
+        //loading UI scene
         sl.loadScene("MainScene");
-
-        //initSceneLoader(rm);
         
         addActor(sl.getRoot());
         
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/immortal.ttf"));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 40;
-		BitmapFont grosTitres = generator.generateFont(parameter);
-		generator.dispose();
+        this.loadUI();
+    }
+	
+	private void loadUI()
+	{
+		this.uiManager = new UIManager();
 		
-		FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Remachine.ttf"));
-		FreeTypeFontParameter parameter2 = new FreeTypeFontParameter();
-		parameter2.size = 40;
-		BitmapFont label = generator2.generateFont(parameter2);
-		generator2.dispose();
-		
-		skin = new Skin();
-		skin.addRegions(new TextureAtlas(Gdx.files.internal("skins/custom.atlas")));
-		skin.add("bigTitle", grosTitres);
-		skin.add("label", label);
-		skin.load(Gdx.files.internal("skins/customskin.json"));
-
-		buttonPlay = new TextButton("Play", skin,"default");
-		buttonPlay.setSize(120,50);
-		buttonPlay.setPosition(Gdx.graphics.getWidth() /2 - buttonPlay.getWidth()/2, Gdx.graphics.getHeight() / 1.3f );
-		buttonPlay.pad(20);
-		buttonPlay.pack();//sinon padding non pris en compte !!
-		buttonPlay.setSize(120,50);
-		
-		buttonPlay.addListener(new ChangeListener() {
+		this.buttonPlay = this.uiManager.createButton("Play");
+		this.buttonPlay.setPosition(Gdx.graphics.getWidth() /2 - this.buttonPlay.getWidth()/2, Gdx.graphics.getHeight() / 1.3f );
+		this.buttonPlay.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
             	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
 				.setScreen(new FroggerScreen(((MainGame)(com.badlogic.gdx.Game) Gdx.app.getApplicationListener())));
 			}
 		});
-		this.addActor(buttonPlay);
+		this.addActor(this.buttonPlay);
 		
-		
-		buttonSettings = new TextButton("High score", skin,"default");
-		buttonSettings.setPosition(Gdx.graphics.getWidth() /2 - buttonPlay.getWidth()/2, Gdx.graphics.getHeight() /1.48f );
-		buttonSettings.pad(20);
-		buttonSettings.pack();//sinon padding non pris en compte !!
-		buttonSettings.setSize(120,50);
-		
-		buttonSettings.addListener(new ChangeListener() {
+		this.buttonSettings = this.uiManager.createButton("High score");
+		this.buttonSettings.setPosition(Gdx.graphics.getWidth() /2 - this.buttonPlay.getWidth()/2, Gdx.graphics.getHeight() /1.48f );
+		this.buttonSettings.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) 
 			{
@@ -100,16 +72,11 @@ public class MenuStage extends Stage
 				.setScreen(new HighScoreScreen());
 			}
 		});
-		this.addActor(buttonSettings);;
+		this.addActor(this.buttonSettings);
 		
-		
-		buttonHighScore = new TextButton("Settings", skin,"default");
-		buttonHighScore.setPosition(Gdx.graphics.getWidth() /2 - buttonPlay.getWidth()/2, Gdx.graphics.getHeight() /1.7f );
-		buttonHighScore.pad(20);
-		buttonHighScore.pack();//sinon padding non pris en compte !!
-		buttonHighScore.setSize(120,50);
-		
-		buttonHighScore.addListener(new ChangeListener() {
+		this.buttonHighScore = this.uiManager.createButton("Settings");
+		this.buttonHighScore.setPosition(Gdx.graphics.getWidth() /2 - this.buttonPlay.getWidth()/2, Gdx.graphics.getHeight() /1.7f );
+		this.buttonHighScore.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
             	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
@@ -117,7 +84,7 @@ public class MenuStage extends Stage
 			}
 		});
         
-		this.addActor(buttonHighScore);;
-        
-    }
+		this.addActor(this.buttonHighScore);
+	}
+	
 }
