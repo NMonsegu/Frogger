@@ -1,7 +1,5 @@
 package edu.cesi.libgdx.frogger.controler;
 
-import java.lang.reflect.InvocationTargetException;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

@@ -11,23 +11,24 @@ import java.util.Map.Entry;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import edu.cesi.libgdx.frogger.controler.MainGame;
 import edu.cesi.libgdx.frogger.model.Score;
 import edu.cesi.libgdx.frogger.resources.SettingsManager;
+import edu.cesi.libgdx.frogger.utils.ParallelList;
 import edu.cesi.libgdx.frogger.utils.UIManager;
+import edu.cesi.libgdx.frogger.utils.ValueComparator;
 import edu.cesi.libgdx.frogger.utils.enums.GameStates;
 import edu.cesi.libgdx.frogger.view.highScore.ScoreStage;
 
@@ -42,7 +43,7 @@ public class EndLevelScreen implements Screen
 	private TextButton btnRetry;
 	private int[] scoreCompare;
 	private Label scoreLabel;
-	private final Map<String, Integer> map ;
+	private Map<String, Integer> map ;
 	private SpriteBatch batch;
 	private TextButton btnSaveScore;
 	private TextField pseudo;
@@ -52,35 +53,42 @@ public class EndLevelScreen implements Screen
 	private String[] StringScore;
 	
 	private UIManager uiManager;
+	private OrthographicCamera camera;
+	private Viewport viewport;
+	
+	private ValueComparator comparator;
 	
 	public EndLevelScreen(GameStates state, Score score)
 	{		
+		this.camera = new OrthographicCamera();
+		this.viewport = new StretchViewport(1200,800,camera);
+		this.viewport.apply();
+		this.camera.position.set(camera.viewportWidth/2,camera.viewportHeight/2,0);
+		this.camera.update();
+		
+		comparator = new ValueComparator();
+		
 		this.map = new HashMap<String, Integer>();
+		
 		this.myScore = score;
 		this.batch = new SpriteBatch();
 		this.background = new Texture(Gdx.files.internal("settingsScreen/settingsBackground1200x800.jpg"));
 		uiManager = new UIManager();
 		
-		
 		settingsManager = SettingsManager.getInstance();
 		difficulty = settingsManager.getLevel();
-        
-		 StringScore = settingsManager.getHighScoreNew(difficulty);		
-		
-		System.out.println(StringScore.toString());
-		
+		StringScore = settingsManager.getHighScore(difficulty);		
+				
 		scoreCompare = new int[StringScore.length];
 		for (int i =0; i < StringScore.length; i++)
 		{			
-			String[] tmp = StringScore[i].split("-");
+			String[] tmp = StringScore[i].split(" - ");
 			map.put(tmp[0], Integer.parseInt(tmp[1]));	
-			
 			scoreCompare[i] = Integer.parseInt(tmp[1]);
 		}
-		sortValueMap();
+		//map = comparator.sortValueMap(map);
 
 		this.stage = new ScoreStage(StringScore);
-		
 		
 		int z = -1;
 		for (int i = 0; i < scoreCompare.length; i++)
@@ -97,9 +105,7 @@ public class EndLevelScreen implements Screen
 		}
 		
 		Gdx.input.setInputProcessor(stage);
-		
-		//this.background = new Texture(Gdx.files.internal("settingsScreen/settingsBackground1200x800.jpg")); 
-		
+				
 		if(state == GameStates.WIN)
 		{
 			title = uiManager.createLabelTitle("YOU WIN !");
@@ -164,38 +170,24 @@ public class EndLevelScreen implements Screen
 	private void saveScore()
 	{
 		map.put(myScore.getName(), myScore.getScore());
-		sortValueMap();
-		
-		Object[] keys = map.keySet().toArray();
-		Object[] values = map.values().toArray();
-		
+		Object[] sortedScore = comparator.sortValueMap(map);
+				
 		String[] scoreToSave = new String[StringScore.length];
-
+		
 		for (int i =0; i < StringScore.length; i ++)
 		{
-			String tmp = ((String) keys[i]).replaceAll(" ", "");
+			String tmp = ""+ sortedScore[i]; 
+			String tmp1 = tmp.replaceAll(" ", "");
+			String tmp2 = tmp1.replaceAll("/^[a-zA-Z]+$/", "");
+			String tmp3 = tmp2.replaceAll("=", " - ");
 			
-			scoreToSave[i] = tmp + "-" + values[i];
+			scoreToSave[i] = ""+ tmp3;
+
 		}
-	   settingsManager.setHighScoreNew(scoreToSave);
+	   settingsManager.setHighScore(scoreToSave);
 	   settingsManager.saveModifications();
 	}
 	
-	public void sortValueMap(){
-		  final List<Entry<String, Integer>> entries = new ArrayList<Entry<String, Integer>>(map.entrySet());
-		 
-		   Collections.sort(entries, new Comparator<Entry<String, Integer>>() 
-		  {
-			    public int compare(final Entry<String, Integer> e1, final Entry<String, Integer> e2) 
-			    {
-			      return e2.getValue().compareTo(e1.getValue());
-			    }
-		  });
-		 
-		  for (final Entry<String, Integer> entry : entries) {
-		    System.out.println(entry.getKey() + " " + entry.getValue());
-		  }
-	}
 	
 	@Override
 	public void show() {	}
@@ -205,6 +197,8 @@ public class EndLevelScreen implements Screen
 	{
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		this.camera.update();	
+
 		batch.begin();
 		batch.draw(background, 0, 0);
 		batch.end();
@@ -213,11 +207,13 @@ public class EndLevelScreen implements Screen
 		stage.draw();
 		
 	}
+	
+
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
+	      this.viewport.update(width,height);
+	      this.camera.position.set(camera.viewportWidth/2,camera.viewportHeight/2,0);		
 	}
 
 	@Override

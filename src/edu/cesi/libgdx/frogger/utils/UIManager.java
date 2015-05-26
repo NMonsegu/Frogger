@@ -12,6 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * This class is used to create UI elements 
+ * 
+ * **/
 public class UIManager 
 {
 	private Skin skin;
@@ -23,6 +27,7 @@ public class UIManager
 		this.useCustomSkin();
 	}
 	
+	/**Load .ttf fonts*/
 	private void loadFontGenerators()
 	{
 		try
@@ -47,6 +52,7 @@ public class UIManager
 		}
 	}
 	
+	/**Use custom skin as default skin*/
 	public void useCustomSkin()
 	{
 		this.skin = new Skin();
@@ -55,7 +61,7 @@ public class UIManager
 		this.skin.add("label", this.labelsFont);
 		this.skin.load(Gdx.files.internal("skins/customskin.json"));
 	}
-	
+	/**return default libgdx skin*/
 	public Skin getDefaultSkin()
 	{
 		Skin skin = new Skin();

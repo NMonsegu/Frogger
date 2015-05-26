@@ -5,11 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -45,13 +41,12 @@ public class HighScoreScreen implements Screen
 	
 		settingsManager = SettingsManager.getInstance();
 
-		this.background = new Texture(Gdx.files.internal("settingsScreen/image.jpg"));
+		this.background = new Texture(Gdx.files.internal("settingsScreen/settingsBackground1200x800.jpg"));
 		level = settingsManager.getLevel();
 		
-		this.stage = new ScoreStage(settingsManager.getHighScoreNew(level));
+		this.stage = new ScoreStage(settingsManager.getHighScore(level));
 		
 		Gdx.input.setInputProcessor(stage);
-
 	}
 	
 	@Override

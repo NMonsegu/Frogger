@@ -10,7 +10,7 @@ public class SettingsManager
 {
 	private SettingsManager()
 	{
-		this.prefs = Gdx.app.getPreferences("test");
+		this.prefs = Gdx.app.getPreferences("gdf");
 	}
 	
 	private static class SettingsHolder
@@ -32,7 +32,7 @@ public class SettingsManager
 
 	
 	
-	public void setHighScoreNew(String[] highscore)
+	public void setHighScore(String[] highscore)
 	{
 		for(int i = 0; i < highscore.length; i ++)
 		{
@@ -42,35 +42,14 @@ public class SettingsManager
 	
 	//String[] testData = new String[] {"toto-100","tito-150","tata-99","zaza-200","lolo-50"};
 	
-	public String[] getHighScoreNew(String difficulty)
+	public String[] getHighScore(String difficulty)
 	{
 		for(int i = 0; i < highScore.length; i ++)
 		{
-			highScore[i] = this.prefs.getString("highscores" + difficulty + i,"nodata-0");
+			highScore[i] = this.prefs.getString("highscores" + difficulty + i,i + "nodata - 0");
 		}
 		return highScore;
 	}
-	
-	
-	
-	
-	
-	/*public void setHighScore(Integer[] highscore)
-	{
-		for(int i = 0; i < highscore.length; i ++)
-		{
-			this.prefs.putInteger("highscore" + this.currentStateLevel  + i , highscore[i]);
-		}
-	}
-	
-	public int[] getHighScore(String difficulty)
-	{
-		for(int i = 0; i < highScore.length; i ++)
-		{
-			highScore[i] = this.prefs.getInteger("highscore" + difficulty + i, 0);
-		}
-		return highScore;
-	}*/
 		
 	public boolean isSoundEnable(){
 		this.currentStateSound = this.prefs.getBoolean("sound",false);

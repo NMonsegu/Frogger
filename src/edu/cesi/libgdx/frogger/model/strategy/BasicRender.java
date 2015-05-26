@@ -22,12 +22,5 @@ public class BasicRender implements RenderBehavior {
 	public void draw(SpriteBatch batch, Rectangle bounds, Animation animation, float stateTime) {
 		
 		batch.draw(animation.getKeyFrame(stateTime,true), bounds.x,bounds.y);
-		
-		/* Collision debug */
-		
-		//shapeRenderer.begin(ShapeType.Line);		 
-		 //shapeRenderer.rect(bounds.getX(), bounds.getY(), bounds.getWidth(),bounds.getHeight()); 
-		//shapeRenderer.end();
-
 	}
 }

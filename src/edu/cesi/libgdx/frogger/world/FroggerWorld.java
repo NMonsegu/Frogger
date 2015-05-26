@@ -104,6 +104,7 @@ public class FroggerWorld
 			{
 				gamestate = GameStates.INGAME;
 				this.timer.launchTimer(valueTimer - (valueTimer -tmpTimer)); 
+				this.playMusic();
 			}
 		}
 		else if (gamestate == GameStates.INGAME)
@@ -111,6 +112,7 @@ public class FroggerWorld
 			if(Gdx.input.isKeyJustPressed(Keys.ESCAPE))
 			{
 				gamestate = GameStates.PAUSE;
+				this.pauseMusic();
 			}
 		}
 	}
@@ -228,6 +230,14 @@ public class FroggerWorld
 		if(soundState)
 		{
 			mainGame.audioManager.playMusic(mainGame.audioManager.getAmbianceMusic());
+		}
+	}
+	
+	private void pauseMusic()
+	{
+		if(soundState)
+		{
+			mainGame.audioManager.pauseMusic(mainGame.audioManager.getAmbianceMusic());
 		}
 	}
 	

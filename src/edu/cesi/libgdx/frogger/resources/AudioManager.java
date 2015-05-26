@@ -84,6 +84,11 @@ public class AudioManager
     	music.play();
     }
     
+    public void pauseMusic(Music music)
+    {
+    	music.pause();
+    }
+    
     /**
      * Stop music.
      * @param music must be a {@link Music}

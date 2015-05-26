@@ -55,11 +55,11 @@ public class SettingsScreen implements Screen
 		this.camera.position.set(camera.viewportWidth/2,camera.viewportHeight/2,0);
 		this.camera.update();
 		loadUI();
-
 	}
 	
-	private void loadUI(){
-		this.background = new Texture(Gdx.files.internal("settingsScreen/image.jpg")); 
+	private void loadUI()
+	{
+		this.background = new Texture(Gdx.files.internal("settingsScreen/settingsBackground1200x800.jpg")); 
 		this.stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 		
