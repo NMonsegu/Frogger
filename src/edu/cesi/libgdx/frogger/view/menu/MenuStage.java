@@ -55,32 +55,36 @@ public class MenuStage extends Stage
 		this.buttonPlay.setPosition(Gdx.graphics.getWidth() /2 - this.buttonPlay.getWidth()/2, Gdx.graphics.getHeight() / 1.3f );
 		this.buttonPlay.addListener(new ChangeListener() {
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
+			public void changed(ChangeEvent event, Actor actor) 
+			{
             	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
 				.setScreen(new FroggerScreen(((MainGame)(com.badlogic.gdx.Game) Gdx.app.getApplicationListener())));
 			}
 		});
-		this.addActor(this.buttonPlay);
 		
-		this.buttonSettings = this.uiManager.createButton("High score");
-		this.buttonSettings.setPosition(Gdx.graphics.getWidth() /2 - this.buttonPlay.getWidth()/2, Gdx.graphics.getHeight() /1.48f );
-		this.buttonSettings.addListener(new ChangeListener() {
+		this.addActor(this.buttonPlay);
+		buttonPlay.getY();
+		this.buttonSettings = this.uiManager.createButton("Settings ");
+		this.buttonSettings.setPosition(Gdx.graphics.getWidth() /2 - this.buttonPlay.getWidth()/2, buttonPlay.getY() - buttonPlay.getHeight() );
+		this.buttonSettings.addListener(new ChangeListener() 
+		{
+			@Override
+			public void changed(ChangeEvent event, Actor actor) 
+			{
+            	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
+				.setScreen(new SettingsScreen());	
+			}
+		});
+		this.addActor(this.buttonSettings);
+		
+		this.buttonHighScore = this.uiManager.createButton("High score");
+		this.buttonHighScore.setPosition(Gdx.graphics.getWidth() /2 - this.buttonPlay.getWidth()/2, buttonSettings.getY() - buttonSettings.getHeight() );
+		this.buttonHighScore.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) 
 			{
             	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
 				.setScreen(new HighScoreScreen());
-			}
-		});
-		this.addActor(this.buttonSettings);
-		
-		this.buttonHighScore = this.uiManager.createButton("Settings");
-		this.buttonHighScore.setPosition(Gdx.graphics.getWidth() /2 - this.buttonPlay.getWidth()/2, Gdx.graphics.getHeight() /1.7f );
-		this.buttonHighScore.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-            	((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())
-				.setScreen(new SettingsScreen());				
 			}
 		});
         

@@ -144,7 +144,7 @@ public class FroggerWorldRenderer
 		    labelScore.draw(batch, stateTime);
 		    //Draw debug
 		    this.font.draw(batch, Integer.toString(Gdx.graphics.getFramesPerSecond()), 600, 680);
-		    this.font.draw(batch, getFormattedSize(Gdx.app.getJavaHeap()), 600, 150);
+		    //this.font.draw(batch, this.getFormattedSize(Gdx.app.getJavaHeap()), 600, 150);
 		    //Draw camera
 		    this.batch.setProjectionMatrix(camera.combined);
 		    
@@ -176,8 +176,8 @@ public class FroggerWorldRenderer
 	        shapeRenderer.rect(800, 35, 60, 20);
 	        
 	        /*Debug*/
-			shapeRenderer.rect(world.getPlayer().getAdvancedCollisionRectangle().getX(), world.getPlayer().getAdvancedCollisionRectangle().getY(), world.getPlayer().getAdvancedCollisionRectangle().getWidth(),world.getPlayer().getAdvancedCollisionRectangle().getHeight()); 
-			shapeRenderer.rect(world.getPlayer().getBounds().getX(), world.getPlayer().getBounds().getY(), world.getPlayer().getBounds().getWidth(),world.getPlayer().getBounds().getHeight()); 
+			//shapeRenderer.rect(world.getPlayer().getAdvancedCollisionRectangle().getX(), world.getPlayer().getAdvancedCollisionRectangle().getY(), world.getPlayer().getAdvancedCollisionRectangle().getWidth(),world.getPlayer().getAdvancedCollisionRectangle().getHeight()); 
+			//shapeRenderer.rect(world.getPlayer().getBounds().getX(), world.getPlayer().getBounds().getY(), world.getPlayer().getBounds().getWidth(),world.getPlayer().getBounds().getHeight()); 
 	    shapeRenderer.end();
 	}
 	

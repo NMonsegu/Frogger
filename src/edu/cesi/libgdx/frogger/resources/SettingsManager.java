@@ -10,7 +10,7 @@ public class SettingsManager
 {
 	private SettingsManager()
 	{
-		this.prefs = Gdx.app.getPreferences("gdf");
+		this.prefs = Gdx.app.getPreferences("afk");
 	}
 	
 	private static class SettingsHolder
@@ -30,8 +30,6 @@ public class SettingsManager
 	private Preferences prefs;
 	private String[] highScore = new String[Constants.NUMBER_OF_HIGH_SCORE];
 
-	
-	
 	public void setHighScore(String[] highscore)
 	{
 		for(int i = 0; i < highscore.length; i ++)
@@ -39,8 +37,6 @@ public class SettingsManager
 			this.prefs.putString("highscores" + this.currentStateLevel  + i , highscore[i]);
 		}
 	}
-	
-	//String[] testData = new String[] {"toto-100","tito-150","tata-99","zaza-200","lolo-50"};
 	
 	public String[] getHighScore(String difficulty)
 	{

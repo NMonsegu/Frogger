@@ -14,8 +14,20 @@ import edu.cesi.libgdx.frogger.view.menu.MenuScreen;
 
 public class ScoreStage extends Stage 
 {
+	private List<String> listView;
 
+	public List<String> getListView(){
+		return this.listView;
+	}
 	private Label title;
+	public Label getTitle() {
+		return title;
+	}
+
+	public TextButton getMainMenu() {
+		return mainMenu;
+	}
+
 	private TextButton mainMenu;
 	private UIManager uiManager;
 	
@@ -27,12 +39,17 @@ public class ScoreStage extends Stage
 	{
 		this.uiManager = new UIManager();
 		
-		title = uiManager.createLabelTitle("High Score");
-		title.setPosition(Gdx.graphics.getWidth()/2-title.getWidth()/2, Gdx.graphics.getHeight() -100);
+		this.title = uiManager.createLabelTitle("High Score");
+		title.setPosition(Gdx.graphics.getWidth()/2-title.getWidth()/2, Gdx.graphics.getHeight()- title.getHeight());
 		this.addActor(title);
 		
+		Array<String> listItems = new Array<String>(highScore);
+		this.listView = uiManager.createList(listItems);
+        this. listView.setPosition((Gdx.graphics.getWidth()/2-title.getWidth()/2) + 80, Gdx.graphics.getHeight() /1.3f);
+        this.addActor(this.listView);
+		
 		mainMenu = uiManager.createButton("Menu");
-        mainMenu.setPosition(Gdx.graphics.getWidth()/2.05f  - mainMenu.getWidth()/2f, Gdx.graphics.getHeight() /3f );
+        mainMenu.setPosition(Gdx.graphics.getWidth()/2.05f  - mainMenu.getWidth()/2f, Gdx.graphics.getHeight() /3f - this.mainMenu.getHeight());
 		
         mainMenu.addListener(new ChangeListener() {
 			@Override
@@ -43,10 +60,7 @@ public class ScoreStage extends Stage
 		});
 		this.addActor(mainMenu);
 		
-		Array<String> listItems = new Array<String>(highScore);
-		final List<String> listView = uiManager.createList(listItems);
-        listView.setPosition((Gdx.graphics.getWidth()/2-title.getWidth()/2) + 80, Gdx.graphics.getHeight() /1.3f);
-        this.addActor(listView);
+
 	}
 }
 

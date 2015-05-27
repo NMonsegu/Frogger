@@ -1,8 +1,6 @@
 package edu.cesi.libgdx.frogger.view.game;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import edu.cesi.libgdx.frogger.controler.MainGame;
 import edu.cesi.libgdx.frogger.model.Score;
 import edu.cesi.libgdx.frogger.resources.SettingsManager;
-import edu.cesi.libgdx.frogger.utils.ParallelList;
 import edu.cesi.libgdx.frogger.utils.UIManager;
 import edu.cesi.libgdx.frogger.utils.ValueComparator;
 import edu.cesi.libgdx.frogger.utils.enums.GameStates;
@@ -39,7 +36,7 @@ public class EndLevelScreen implements Screen
 	private String difficulty;
 	private ScoreStage stage;
 	private Skin skin;
-	private Label title;
+	private Label titleWinLoose;
 	private TextButton btnRetry;
 	private int[] scoreCompare;
 	private Label scoreLabel;
@@ -75,6 +72,9 @@ public class EndLevelScreen implements Screen
 		this.background = new Texture(Gdx.files.internal("settingsScreen/settingsBackground1200x800.jpg"));
 		uiManager = new UIManager();
 		
+		
+		
+		
 		settingsManager = SettingsManager.getInstance();
 		difficulty = settingsManager.getLevel();
 		StringScore = settingsManager.getHighScore(difficulty);		
@@ -87,8 +87,8 @@ public class EndLevelScreen implements Screen
 			scoreCompare[i] = Integer.parseInt(tmp[1]);
 		}
 		//map = comparator.sortValueMap(map);
-
 		this.stage = new ScoreStage(StringScore);
+
 		
 		int z = -1;
 		for (int i = 0; i < scoreCompare.length; i++)
@@ -99,32 +99,39 @@ public class EndLevelScreen implements Screen
 			} 
 		}
 		
-		if(z != -1)
-		{
-			createHighScoreUI(score);
-		}
 		
-		Gdx.input.setInputProcessor(stage);
-				
+
 		if(state == GameStates.WIN)
 		{
-			title = uiManager.createLabelTitle("YOU WIN !");
-			title.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() -700);
-			stage.addActor(title);
+			titleWinLoose = uiManager.createLabelTitle("YOU WIN !");
+			titleWinLoose.setPosition(Gdx.graphics.getWidth()/2 -titleWinLoose.getWidth() /2, stage.getTitle().getY() - stage.getTitle().getHeight());
+			stage.addActor(titleWinLoose);
+			System.out.println("WIN");
+	
 		}
 		else if (state == GameStates.GAMEOVER)
 		{
-			title = uiManager.createLabelTitle("GAME OVER !");
-			title.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() -700);
-			stage.addActor(title);
+			titleWinLoose = uiManager.createLabelTitle("GAME OVER !");
+			titleWinLoose.setPosition(Gdx.graphics.getWidth()/2 -titleWinLoose.getWidth()/2, stage.getTitle().getY() - stage.getTitle().getHeight());
+			stage.addActor(titleWinLoose);
+			System.out.println("loooose");
 		}
 		else
 		{
 			System.out.println("Error");
 		}
 		
+		
+		if(z != -1)
+		{
+			createHighScoreUI(score);
+		}
+		
+		
+	
+		
 		btnRetry = uiManager.createButton("Try again");
-		btnRetry.setPosition(Gdx.graphics.getWidth()/2 -btnRetry.getWidth()/2 , Gdx.graphics.getHeight() /2.5f );
+		btnRetry.setPosition(Gdx.graphics.getWidth()/2 -btnRetry.getWidth()/2 , stage.getMainMenu().getY() - stage.getMainMenu().getHeight());
 		btnRetry.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -132,24 +139,27 @@ public class EndLevelScreen implements Screen
 				.setScreen(new FroggerScreen((MainGame)((com.badlogic.gdx.Game) Gdx.app.getApplicationListener())));
 			}
 		});
-		stage.addActor(btnRetry);		
+		stage.addActor(btnRetry);
+		
+		Gdx.input.setInputProcessor(stage);
 	}
 	
 	
 	private void createHighScoreUI(Score score)
 	{
 		scoreLabel = uiManager.createLabelTitle("NEW SCORE ! : " + score.getScore());
-		scoreLabel.setPosition(Gdx.graphics.getWidth()/3f, Gdx.graphics.getHeight() /1.25f);
+		scoreLabel.setPosition(Gdx.graphics.getWidth()/2 -scoreLabel.getWidth()/2, titleWinLoose.getY() - titleWinLoose.getHeight());
 		stage.addActor(scoreLabel);
 		
 		pseudo = new TextField("    pseudo",uiManager.getCustomSkin());
-		pseudo.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() /1.9f);
+		pseudo.setPosition(Gdx.graphics.getWidth()/1.9f, stage.getMainMenu().getY() + stage.getMainMenu().getHeight());
 		pseudo.pack();
 		pseudo.setVisible(true);
 		stage.addActor(pseudo);
 		
 		btnSaveScore = uiManager.createButton("Save score");
-		btnSaveScore.setPosition(Gdx.graphics.getWidth()/2.6f, Gdx.graphics.getHeight() /1.9f);
+		btnSaveScore.pad(5, 5, 5, 5);
+		btnSaveScore.setPosition(Gdx.graphics.getWidth()/2.6f, stage.getMainMenu().getY() + stage.getMainMenu().getHeight());
 		
 		limitSaveScore = false;
 		
@@ -200,6 +210,7 @@ public class EndLevelScreen implements Screen
 		this.camera.update();	
 
 		batch.begin();
+		batch.setProjectionMatrix(camera.combined);
 		batch.draw(background, 0, 0);
 		batch.end();
 		
